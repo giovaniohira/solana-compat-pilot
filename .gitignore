@@ -1,5 +1,8 @@
 node_modules/
+.cursor/
 npm-debug.log*
 .DS_Store
 .env*
 !.env.example
+solana-compat-pilot-report.json
+solana-compat-pilot.rollback.patch

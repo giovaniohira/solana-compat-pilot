@@ -5,13 +5,18 @@
   "description": "Conservative Codemod/JSSG workflow for migrating @solana/web3.js v1 projects onto the Solana compat bridge.",
   "type": "module",
   "scripts": {
-    "test": "npx codemod jssg test -l tsx ./scripts/solana-compat-pilot.ts ./tests",
+    "migrate": "node ./scripts/migration-pipeline.mjs",
+    "test": "npm run test:jssg && npm run test:pipeline",
+    "test:jssg": "npx codemod jssg test -l tsx ./scripts/solana-compat-pilot.ts ./tests",
+    "test:pipeline": "node --test ./tests/pipeline/*.test.mjs",
     "test:verbose": "npx codemod jssg test -l tsx ./scripts/solana-compat-pilot.ts ./tests -v",
-    "validate": "npx codemod workflow validate -w workflow.yaml"
+    "validate": "npx codemod workflow validate -w workflow.yaml",
+    "audit": "npm audit --audit-level=moderate",
+    "ci": "npm test && npm run validate && npm run audit"
   },
   "devDependencies": {
-    "@codemod.com/jssg-types": "latest",
-    "codemod": "latest",
-    "typescript": "latest"
+    "@codemod.com/jssg-types": "1.6.0",
+    "codemod": "1.9.0",
+    "typescript": "6.0.3"
   }
 }

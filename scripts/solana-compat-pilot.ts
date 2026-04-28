@@ -6,12 +6,12 @@ const COMPAT_PACKAGE = "@solana/web3-compat";
 const MARKER = "SOLANA_COMPAT_PILOT";
 
 const HOTSPOTS = [
-  { token: "new Connection", reason: "Connection can often become createSolanaRpc, but method coverage must be checked." },
-  { token: "new PublicKey", reason: "PublicKey can sometimes become address(), but object-method call sites may still need compat." },
-  { token: "Keypair.", reason: "Keypair to Kit signer migration may require async control-flow changes." },
-  { token: "Transaction", reason: "Mutable transactions need a transaction-message pipeline review before Kit migration." },
-  { token: "onAccountChange", reason: "Subscriptions should be reviewed against createSolanaRpcSubscriptions." },
-  { token: "sendAndConfirmTransaction", reason: "Submission flow may need Kit signing and send pipeline changes." },
+  { label: "Connection", pattern: /\bnew\s+([A-Za-z_$][\w$]*\.)?Connection\s*\(/, reason: "Connection can often become createSolanaRpc, but method coverage must be checked." },
+  { label: "PublicKey", pattern: /\bnew\s+([A-Za-z_$][\w$]*\.)?[A-Za-z_$]*PublicKey\s*\(/, reason: "PublicKey can sometimes become address(), but object-method call sites may still need compat." },
+  { label: "Keypair", pattern: /\b([A-Za-z_$][\w$]*\.)?Keypair\./, reason: "Keypair to Kit signer migration may require async control-flow changes." },
+  { label: "Transaction", pattern: /\bnew\s+([A-Za-z_$][\w$]*\.)?Transaction\s*\(/, reason: "Mutable transactions need a transaction-message pipeline review before Kit migration." },
+  { label: "Subscription", pattern: /\bon[A-Za-z]+Change\s*\(/, reason: "Subscriptions should be reviewed against createSolanaRpcSubscriptions." },
+  { label: "sendAndConfirmTransaction", pattern: /\bsendAndConfirmTransaction\s*\(/, reason: "Submission flow may need Kit signing and send pipeline changes." },
 ];
 
 const codemod: Codemod<TSX> = async (root) => {
@@ -35,7 +35,7 @@ const codemod: Codemod<TSX> = async (root) => {
   );
 
   if (!source.includes(MARKER)) {
-    const triggered = HOTSPOTS.filter((hotspot) => source.includes(hotspot.token));
+    const triggered = HOTSPOTS.filter((hotspot) => hotspot.pattern.test(source));
 
     if (triggered.length > 0) {
       edits.push({
@@ -72,14 +72,14 @@ function isPackageImportSource(literal: SgNode<TSX>): boolean {
       return false;
     }
 
-    return /^require\s*\(/.test(ancestor.text());
+    return /^(require|import)\s*\(/.test(ancestor.text());
   });
 }
 
-function buildReviewMarker(triggered: Array<{ token: string; reason: string }>, eol: string): string {
+function buildReviewMarker(triggered: Array<{ label: string; reason: string }>, eol: string): string {
   const lines = [
     `// ${MARKER}: safe import bridge applied. Review these full-Kit migration hotspots before removing this marker:`,
-    ...triggered.map((hotspot) => `// - ${hotspot.token}: ${hotspot.reason}`),
+    ...triggered.map((hotspot) => `// - ${hotspot.label}: ${hotspot.reason}`),
     "",
   ];
 
