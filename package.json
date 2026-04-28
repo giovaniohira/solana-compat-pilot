@@ -1,0 +1,17 @@
+{
+  "name": "solana-compat-pilot",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Conservative Codemod/JSSG workflow for migrating @solana/web3.js v1 projects onto the Solana compat bridge.",
+  "type": "module",
+  "scripts": {
+    "test": "npx codemod jssg test -l tsx ./scripts/solana-compat-pilot.ts ./tests",
+    "test:verbose": "npx codemod jssg test -l tsx ./scripts/solana-compat-pilot.ts ./tests -v",
+    "validate": "npx codemod workflow validate -w workflow.yaml"
+  },
+  "devDependencies": {
+    "@codemod.com/jssg-types": "latest",
+    "codemod": "latest",
+    "typescript": "latest"
+  }
+}

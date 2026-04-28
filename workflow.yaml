@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/codemod/codemod/refs/heads/main/schemas/workflow.json
+version: "1"
+
+nodes:
+  - id: solana-compat-bridge
+    name: Solana web3.js compat bridge migration
+    type: automatic
+    steps:
+      - name: Rewrite safe @solana/web3.js imports to @solana/web3-compat
+        js-ast-grep:
+          js_file: scripts/solana-compat-pilot.ts
+          language: "tsx"
+
+      - name: AI follow-up for full Kit migration hotspots
+        ai:
+          prompt: |
+            The deterministic JSSG pass migrated safe @solana/web3.js import
+            sources to @solana/web3-compat and inserted SOLANA_COMPAT_PILOT
+            review markers where full @solana/kit rewrites may be needed.
+
+            For each marked file:
+            1. Keep @solana/web3-compat unless you can prove the local code can
+               move directly to Kit APIs without changing runtime behavior.
+            2. For Connection, prefer createSolanaRpc/createSolanaRpcSubscriptions
+               only when every call site maps cleanly to Kit's functional RPC API.
+            3. For PublicKey, use address() only for address-like strings and keep
+               compat PublicKey for legacy object APIs.
+            4. For Keypair, use Kit signer APIs only when async flow changes are
+               safe and tests/build can prove it.
+            5. Do not remove markers until the relevant build or test command passes.

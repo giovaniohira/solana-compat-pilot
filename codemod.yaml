@@ -1,0 +1,24 @@
+schema_version: "1.0"
+
+name: "solana-compat-pilot"
+version: "0.1.0"
+description: "Conservative @solana/web3.js v1 to Solana compat bridge migration with Kit readiness markers."
+author: "Giovani Ohira"
+license: "MIT"
+workflow: "workflow.yaml"
+category: "migration"
+
+targets:
+  languages: ["typescript", "javascript", "tsx", "jsx"]
+
+keywords:
+  - "upgrade"
+  - "solana"
+  - "web3js"
+  - "kit"
+
+registry:
+  access: "public"
+  visibility: "public"
+
+capabilities: []
