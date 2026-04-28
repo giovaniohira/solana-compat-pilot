@@ -1,6 +1,6 @@
 # Validation Report
 
-## Local Quality Gates
+## Local Quality Gates After Remediation
 
 Commands:
 
@@ -11,7 +11,8 @@ npm run validate
 
 Results:
 
-- JSSG fixtures: 3 passed, 0 failed.
+- JSSG fixtures: 13 passed, 0 failed.
+- Pipeline unit tests: 6 passed, 0 failed.
 - Workflow validation: passed.
 - Dependency audit from `npm install`: 0 vulnerabilities.
 
@@ -20,8 +21,11 @@ Fixture coverage:
 - ESM import source rewrite with `Connection` and `PublicKey` markers.
 - CommonJS `require` source rewrite with `Keypair` and `Transaction` markers.
 - Negative local `PublicKey` file remains unchanged.
+- Namespace imports, aliases, type-only imports, dynamic imports,
+  `import = require`, comments/strings, existing markers, mixed packages,
+  single quotes, and safe no-marker files.
 
-## Real-Repo Smoke Run
+## Real-Repo Smoke Run After Remediation
 
 Target:
 
@@ -36,13 +40,15 @@ npx codemod workflow run -w workflow.yaml -t <temp>/solana-compat-pilot-validati
 
 Result:
 
-- Workflow completed successfully in 3.0s.
+- Dry-run report completed without modifying target files.
+- Apply report completed successfully.
 - 30 TypeScript files changed.
+- `package.json` changed with 3 added Solana bridge dependencies.
 - Diff stat: 148 insertions, 30 deletions.
 - Every changed file had the legacy import source rewritten to
   `@solana/web3-compat`.
 - Hotspot markers were inserted where full-Kit migration review is required.
-- No unrelated files were modified.
+- Rollback patch was emitted.
 
 Representative diff:
 
@@ -61,28 +67,41 @@ Representative diff:
 - Full direct Kit transforms are intentionally not implemented until each
   pattern has fixtures and real-repo proof.
 
-## Council Review: Phase 7
+## Hostile Review After Initial Baseline
 
-| Council Member | Score | Flaws | Fixes |
-| --- | ---: | --- | --- |
-| Principal Engineer | 9 | Scope is honest and validated. | Add dependency transform next. |
-| Staff Engineer | 8 | Need package manifest support. | Add as next milestone. |
-| Product Manager | 8 | Real value is bridge-first. | Keep README clear. |
-| Hackathon Judge | 8 | Automation count is narrower than top competitors. | Use zero-FP and Solana focus as pitch. |
-| QA Engineer | 8 | More fixtures needed for dynamic import and package files. | Track in roadmap. |
-| Security Engineer | 10 | No unsafe capabilities. | Preserve. |
-| Performance Engineer | 9 | Real run completed in 3s. | Keep AI opt-in. |
-| Skeptical Reviewer | 8 | Build of target repo not yet run. | Report as residual risk. |
+The initial baseline was not a winning system. It had three passing fixtures and
+only rewrote import/require source strings. The docs overstated maturity by
+presenting council scores that were not supported by implementation evidence.
 
-Status: approved, all scores >= 8.
+Critical gaps identified:
 
-## Final Judgment: Phase 8
+- No manifest migration.
+- No rollback path.
+- No dry-run report or machine-readable confidence output.
+- No CI.
+- Tiny fixture set.
+- No reproducible target build/test gate.
+- No direct Kit transform with proof.
 
-- Would I use this? Yes, as a safe first step before a full Kit migration.
-- What breaks? Projects without `@solana/web3-compat` installed need dependency
-  updates before build.
-- What is fake? No fake direct-Kit rewrites are claimed.
-- What is missing? Dependency update automation, dynamic imports, and direct-Kit
-  transforms for proven safe cases.
-- Final score: 8.3/10 today, with a clear path to 9+ after dependency automation
-  and one direct-Kit transform category.
+## Remediation Status
+
+Fixed in the remediation slice:
+
+- Added manifest migration for `@solana/web3-compat`, `@solana/kit`, and
+  `@solana/client`.
+- Added dry-run/apply runner with JSON report and confidence buckets.
+- Added git rollback patch generation.
+- Added validation command hooks.
+- Expanded JSSG fixtures from 3 to 13.
+- Added pipeline unit tests.
+- Added CI gates for tests, workflow validation, and audit.
+- Removed inflated score language from user-facing docs.
+
+Still missing:
+
+- A direct Kit transform with enough proof to claim meaningful full migration
+  coverage.
+- Reproducible public case-study branch with before/after commits and target
+  build/test logs.
+- Lockfile refresh automation is available through `--install`, but lockfile
+  edits are not synthesized manually.

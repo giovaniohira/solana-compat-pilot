@@ -70,17 +70,9 @@ npx codemod workflow run -w workflow.yaml -t /path/to/repo --allow-dirty --no-in
 4. Real repo: run against an open-source Solana repo and record findings.
 5. Expansion: add direct-Kit transforms only after fixtures prove safety.
 
-## Council Review: Phases 3-6
+## Design Risk
 
-| Council Member | Score | Flaws | Fixes |
-| --- | ---: | --- | --- |
-| Principal Engineer | 9 | Strong conservative boundary. | Do not overstate Kit support. |
-| Staff Engineer | 8 | Needs modular expansion path. | One transform category per milestone. |
-| Product Manager | 8 | Name is clear, but scope must be sold. | Position as safe runway to Kit. |
-| Hackathon Judge | 8 | Initial automation is smaller than some claims. | Show zero FP and real-repo evidence. |
-| QA Engineer | 8 | Need more fixtures over time. | Add dynamic import/package tests later. |
-| Security Engineer | 10 | Capability-free and bounded. | Maintain this posture. |
-| Performance Engineer | 9 | Fast AST/string-literal edits. | Keep AI gated. |
-| Skeptical Reviewer | 8 | Needs actual test run. | Run tests before final report. |
-
-Status: approved, all scores >= 8.
+This architecture is credible only if the runner is treated as part of the
+product, not a wrapper around a tiny transform. Reports, rollback artifacts,
+manifest migration, validation hooks, and real-repo replay are required for the
+tool to be usable by production teams.

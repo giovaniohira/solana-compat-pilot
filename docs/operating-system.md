@@ -61,7 +61,8 @@ Rules:
 - Each council member scores 0-10.
 - Any score below 8 fails the artifact.
 - Fixes must be concrete, not motivational.
-- Re-review after fixes until all scores are >= 8.
+- Re-review after fixes until the artifact has executable evidence, not just a
+  favorable opinion.
 
 ## Reusable Skills
 
@@ -106,17 +107,8 @@ Critical rules:
 - Unsupported patterns must be surfaced.
 - AI output is not trusted without validation.
 
-## Council Review: Pre-Phase 0
+## Operating Risks
 
-| Council Member | Score | Flaws | Fixes |
-| --- | ---: | --- | --- |
-| Principal Engineer | 9 | None blocking. | Keep KB updated per commit. |
-| Staff Engineer | 8 | Need modular milestones. | Implement one transform category per commit. |
-| Product Manager | 8 | Scope must stay legible. | Keep README user-first. |
-| Hackathon Judge | 8 | Needs visible evidence. | Add fixtures and real-repo case study. |
-| QA Engineer | 8 | Need negative tests. | Maintain negative fixtures. |
-| Security Engineer | 9 | Capability-free package is strong. | Do not add unsafe capabilities. |
-| Performance Engineer | 9 | Deterministic pass is cheap. | Gate AI step. |
-| Skeptical Reviewer | 8 | Claims need proof. | Tie all claims to tests/results. |
-
-Status: approved, all scores >= 8.
+The council framework is useful only as a checklist. It is not evidence by
+itself and must not be presented as proof of quality. Only executable gates,
+fixture results, real-repo validation, and reproducible reports count as proof.

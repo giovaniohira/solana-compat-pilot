@@ -38,17 +38,9 @@ For Solana migration, realistic automation is staged:
 | 4 | wagmi v1 to v2 | High | Strong demo potential | Crowded and official PR competitor | Rejected |
 | 5 | ethers v5 to v6 | High | Clear patterns | Registry already has strong entries | Rejected |
 
-## Council Review: Phase 1
+## Risk Review
 
-| Council Member | Score | Flaws | Fixes |
-| --- | ---: | --- | --- |
-| Principal Engineer | 9 | Good failure analysis. | Keep unsupported patterns explicit. |
-| Staff Engineer | 8 | Needs staged architecture. | Use milestone roadmap. |
-| Product Manager | 8 | Compat bridge value needs framing. | Emphasize safe migration runway. |
-| Hackathon Judge | 8 | Must show more than import rewrite. | Add marker/reporting and roadmap. |
-| QA Engineer | 8 | Need coverage accounting. | Add fixture and real-run reports. |
-| Security Engineer | 9 | Conservative behavior is safe. | Keep no capabilities. |
-| Performance Engineer | 9 | Low-cost pass. | Avoid default AI. |
-| Skeptical Reviewer | 8 | May be perceived as small. | Validate against real repos. |
-
-Status: approved, all scores >= 8.
+The bridge-first approach is useful but not enough to satisfy the hackathon's
+80% automation goal. It needs package migration, rollback, confidence reporting,
+and at least one proven direct Kit transform before it can be positioned as more
+than a safe first migration stage.

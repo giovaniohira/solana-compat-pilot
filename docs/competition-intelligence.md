@@ -46,17 +46,9 @@ A winning project looks like:
 - Backed by tests, CI, and real-repo evidence.
 - Differentiated from demos by rollback, safety, and confidence reporting.
 
-## Council Review: Phase -1
+## Risk Review
 
-| Council Member | Score | Flaws | Required Fixes |
-| --- | ---: | --- | --- |
-| Principal Engineer | 9 | Must avoid overclaiming full Kit support. | Position first release as compat bridge plus markers. |
-| Staff Engineer | 8 | Needs extensibility for future Kit transforms. | Keep pattern catalog and tests modular. |
-| Product Manager | 8 | Compat bridge may sound less ambitious. | Emphasize immediate safe value and progressive path. |
-| Hackathon Judge | 8 | Competitors claim higher automation. | Beat them on evidence and zero false positives. |
-| QA Engineer | 8 | Needs negative and marker tests. | Add fixture matrix. |
-| Security Engineer | 9 | Capability-free design is strong. | Keep capabilities empty unless necessary. |
-| Performance Engineer | 9 | String-literal import edits are cheap. | Avoid AI by default. |
-| Skeptical Reviewer | 8 | Current scope is small. | Add roadmap for proven full-Kit transforms. |
-
-Status: approved, all scores >= 8.
+This strategy only becomes competitive if the implementation proves more than a
+bridge import rewrite. The minimum credible bar is dependency migration,
+rollback, confidence reporting, CI, a meaningful fixture corpus, reproducible
+real-repo validation, and at least one direct Kit transform backed by tests.

@@ -42,17 +42,9 @@ Source: DoraHacks hackathon BUIDL API for `boring-ai`, count 11.
 - Compatibility bridge as a production-safe first step.
 - Explicit full-Kit readiness markers and confidence accounting.
 
-## Council Review: Phase 2
+## Competitive Risk
 
-| Council Member | Score | Flaws | Fixes |
-| --- | ---: | --- | --- |
-| Principal Engineer | 9 | Analysis correctly identifies proof gap. | Keep evidence reproducible. |
-| Staff Engineer | 8 | Need direct path beyond imports. | Roadmap direct-Kit transforms. |
-| Product Manager | 8 | Need sharp positioning vs SolSweep. | Emphasize JSSG-native package. |
-| Hackathon Judge | 8 | IDLift is very strong. | Compete on Solana-specific safety. |
-| QA Engineer | 8 | Must test dynamic import later. | Add as known edge case. |
-| Security Engineer | 9 | Good rejection of broad AI. | Keep capability-free. |
-| Performance Engineer | 9 | Narrow pass is efficient. | Avoid dashboard overhead. |
-| Skeptical Reviewer | 8 | Solana lane has competitors. | Differentiate by compat bridge correctness. |
-
-Status: approved, all scores >= 8.
+The strongest competitors show deeper automation, more fixtures, registry proof,
+or adoption attempts. This project can only compete if it turns the Solana lane
+into a measured migration pipeline: manifest edits, reports, rollback, CI,
+real-repo replay, and direct Kit transforms that are added only when proven.
