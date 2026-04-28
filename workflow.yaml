@@ -1,6 +1,14 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/codemod/codemod/refs/heads/main/schemas/workflow.json
 version: "1"
 
+params:
+  schema:
+    run_ai_step:
+      name: "Run AI follow-up"
+      description: "Enable bounded AI cleanup for marked full-Kit migration hotspots"
+      type: string
+      default: "false"
+
 nodes:
   - id: solana-compat-bridge
     name: Solana web3.js compat bridge migration
@@ -12,6 +20,7 @@ nodes:
           language: "tsx"
 
       - name: AI follow-up for full Kit migration hotspots
+        if: params.run_ai_step == "true"
         ai:
           prompt: |
             The deterministic JSSG pass migrated safe @solana/web3.js import
