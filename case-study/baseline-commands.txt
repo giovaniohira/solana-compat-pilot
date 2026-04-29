@@ -1,0 +1,8 @@
+# Run from repository root after: npm ci
+# Capture: stdout, stderr, exit code for each line.
+
+npm test
+npm run validate
+npm run audit
+npm run typecheck
+npm run case-study:replay

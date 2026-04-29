@@ -23,10 +23,15 @@ reported with clear AI/human follow-up instructions.
 
 ```bash
 npm install
+npm run typecheck
 npm test
 npx codemod workflow validate -w workflow.yaml
-npx codemod workflow run -w workflow.yaml -t /path/to/solana-project --allow-dirty --no-interactive
+node ./scripts/migration-pipeline.mjs --target /path/to/solana-project --dry-run
 ```
+
+Replayable public evidence for judges is documented under `case-study/` (command checklist, `npm run case-study:replay`, and committed `case-study/artifacts/*.json` samples).
+
+The migration runner is split under `scripts/pipeline/` (scan/manifest/direct Kit/report/rollback) so the CLI entry `scripts/migration-pipeline.mjs` stays a thin orchestrator.
 
 Recommended pipeline:
 
@@ -34,16 +39,33 @@ Recommended pipeline:
 # Dry-run: no target files changed, report written in the target repo.
 node ./scripts/migration-pipeline.mjs --target /path/to/solana-project --dry-run
 
-# Apply deterministic changes and produce a rollback patch.
-node ./scripts/migration-pipeline.mjs --target /path/to/solana-project --apply
+# Apply deterministic changes and produce a rollback patch (requires validation checks).
+node ./scripts/migration-pipeline.mjs --target /path/to/solana-project --apply --check "npm test"
+
+# Apply with opt-in direct Kit transforms (repeat --direct-kit for both).
+node ./scripts/migration-pipeline.mjs --target /path/to/solana-project --apply --check "npm test" --direct-kit public-key-literals --direct-kit connection-string-literals
 
 # Apply, refresh lockfile, and run target validation commands.
 node ./scripts/migration-pipeline.mjs --target /path/to/solana-project --apply --install --check "npm test" --check "npm run build"
 ```
 
+Apply mode refuses dirty git targets by default. Pass `--allow-dirty` only when
+the target has intentional uncommitted changes and the rollback patch is enough
+for the run.
+
+Apply mode also requires at least one `--check` command by default so applies are
+always tied to a real target validation gate. Use `--skip-validation` only when
+you explicitly accept an unverified apply (for example in throwaway sandboxes).
+
+Dry-run and report scans exclude common test and fixture directories (`tests/`,
+`__tests__/`, `fixtures/`, `*.test.*`, `*.spec.*`, `.cursor/`, and similar) so
+counts reflect product source. Pass `--include-test-dirs` to scan them anyway,
+and `--exclude-glob` (repeatable) to add project-specific exclusions.
+
 The apply report includes:
 
 - package manifest changes,
+- opt-in direct Kit transform changes,
 - changed source confidence buckets,
 - exact hotspots that still need review,
 - validation command results,
@@ -59,6 +81,13 @@ Automated:
 - `import x = require("@solana/web3.js")` to `@solana/web3-compat`.
 - `package.json` additions for `@solana/web3-compat`, `@solana/kit`, and
   `@solana/client` when `@solana/web3.js` is present.
+- Opt-in direct Kit rewrites:
+  - unaliased `new PublicKey("<literal>")` when the imported `PublicKey` is only
+    used for string-literal constructors and the constructed values are not used
+    through legacy object/member APIs (`address` from `@solana/kit`);
+  - unaliased `new Connection("<literal>")` when the `Connection` import is only
+    used for that narrow constructor pattern without member follow-ups
+    (`createSolanaRpc` from `@solana/kit`).
 - Dry-run JSON report, confidence buckets, validation command hooks, and git
   rollback patch.
 - Review markers for full-Kit migration hotspots.
@@ -66,7 +95,8 @@ Automated:
 Not automated yet:
 
 - `new Connection(...)` to `createSolanaRpc(...)`.
-- `new PublicKey(...)` to `address(...)`.
+- `new PublicKey(...)` to `address(...)` when the value is used through legacy
+  `PublicKey` object methods.
 - `Keypair` to async Kit signer APIs.
 - Mutable `Transaction` builders to Kit transaction-message pipelines.
 

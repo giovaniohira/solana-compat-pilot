@@ -12,7 +12,7 @@ npm run validate
 Results:
 
 - JSSG fixtures: 13 passed, 0 failed.
-- Pipeline unit tests: 6 passed, 0 failed.
+- Pipeline unit tests: 9 passed, 0 failed.
 - Workflow validation: passed.
 - Dependency audit from `npm install`: 0 vulnerabilities.
 
@@ -35,7 +35,8 @@ Target:
 Command:
 
 ```bash
-npx codemod workflow run -w workflow.yaml -t <temp>/solana-compat-pilot-validation --allow-dirty --no-interactive
+node ./scripts/migration-pipeline.mjs --target <temp>/solana-compat-pilot-validation --dry-run --report <temp>/dry-run-report.json
+node ./scripts/migration-pipeline.mjs --target <temp>/solana-compat-pilot-validation --apply --report <temp>/apply-report.json
 ```
 
 Result:
@@ -62,8 +63,11 @@ Representative diff:
 
 ## Known Gaps
 
-- Dynamic `import("@solana/web3.js")` is not yet supported.
-- `package.json` dependency changes are not yet automated.
+- Dynamic `import("@solana/web3.js")` is supported by the package-source
+  rewrite fixture.
+- `package.json` dependency changes are automated by the pipeline runner.
+- Direct Kit rewrites are limited to the opt-in `public-key-literals` transform
+  until broader patterns have proof.
 - Full direct Kit transforms are intentionally not implemented until each
   pattern has fixtures and real-repo proof.
 
@@ -96,11 +100,13 @@ Fixed in the remediation slice:
 - Added pipeline unit tests.
 - Added CI gates for tests, workflow validation, and audit.
 - Removed inflated score language from user-facing docs.
+- Added dirty-target refusal by default in apply mode.
+- Added an opt-in direct Kit transform for safe `PublicKey` string literals.
 
 Still missing:
 
-- A direct Kit transform with enough proof to claim meaningful full migration
-  coverage.
+- Broader direct Kit transforms with enough proof to claim meaningful full
+  migration coverage.
 - Reproducible public case-study branch with before/after commits and target
   build/test logs.
 - Lockfile refresh automation is available through `--install`, but lockfile

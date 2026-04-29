@@ -37,3 +37,8 @@ nodes:
             4. For Keypair, use Kit signer APIs only when async flow changes are
                safe and tests/build can prove it.
             5. Do not remove markers until the relevant build or test command passes.
+            6. Return a unified diff only. Do not include prose outside the diff.
+            7. Keep edits inside files that already contain SOLANA_COMPAT_PILOT
+               markers unless a validation failure requires an import fix in the
+               same dependency boundary.
+            8. If no safe direct Kit migration exists, return an empty diff.

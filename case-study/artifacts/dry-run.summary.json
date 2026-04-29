@@ -1,0 +1,11 @@
+{
+  "sourceFilesScanned": 1,
+  "sourceFilesWithLegacySolanaImportsBefore": 1,
+  "sourceFilesWithLegacySolanaImportsAfter": 1,
+  "manifestChanges": 3,
+  "directKitFilesChanged": 0,
+  "filesNeedingReview": 1,
+  "dynamicImportFiles": 0,
+  "unsupportedDynamicImports": 0,
+  "validationFailures": 0
+}

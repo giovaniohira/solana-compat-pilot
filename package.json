@@ -11,8 +11,10 @@
     "test:pipeline": "node --test ./tests/pipeline/*.test.mjs",
     "test:verbose": "npx codemod jssg test -l tsx ./scripts/solana-compat-pilot.ts ./tests -v",
     "validate": "npx codemod workflow validate -w workflow.yaml",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
     "audit": "npm audit --audit-level=moderate",
-    "ci": "npm test && npm run validate && npm run audit"
+    "ci": "npm run typecheck && npm test && npm run validate && npm run audit",
+    "case-study:replay": "node ./scripts/replay-case-study.mjs"
   },
   "devDependencies": {
     "@codemod.com/jssg-types": "1.6.0",

@@ -62,8 +62,10 @@ Success definition:
 | --- | --- | --- |
 | `import ... from "@solana/web3.js"` | Rewrite source to `@solana/web3-compat` | High |
 | `require("@solana/web3.js")` | Rewrite source to `@solana/web3-compat` | High |
+| `import("@solana/web3.js")` | Rewrite source to `@solana/web3-compat` | High |
+| `new PublicKey("<literal>")` without legacy object/member usage | Opt-in rewrite to `address("<literal>")` from `@solana/kit` | High |
 | `new Connection(...)` | Add marker, no rewrite | Medium risk |
-| `new PublicKey(...)` | Add marker, no rewrite | Medium risk |
+| `new PublicKey(...)` with object API usage | Add marker, no rewrite | Medium risk |
 | `Keypair.*` | Add marker, no rewrite | High risk |
 | `new Transaction(...)` | Add marker, no rewrite | High risk |
 | `onAccountChange` | Add marker, no rewrite | High risk |
@@ -84,9 +86,14 @@ Success definition:
 - Aliased named imports: supported by package-source rewrite.
 - CommonJS imports: supported by package-source rewrite.
 - Type-only imports: supported by package-source rewrite.
-- Dynamic imports: not yet supported; must be added with a fixture before claim.
+- Dynamic imports: supported by package-source rewrite.
+- Direct Kit `PublicKey` literals: supported only when the imported `PublicKey`
+  is used for string-literal constructors and constructed values are not used
+  through legacy object/member APIs.
 - Multi-package files: only the Solana package source should change.
 - Existing marker: do not duplicate marker comments.
+- Dirty git targets: apply mode refuses uncommitted changes unless the operator
+  passes `--allow-dirty`.
 
 ## Failure Modes
 

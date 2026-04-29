@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "1.1",
+  "tool": "solana-compat-pilot",
+  "mode": "dry-run",
+  "target": "<temporary-sample-target>",
+  "summary": {
+    "sourceFilesScanned": 1,
+    "sourceFilesWithLegacySolanaImportsBefore": 1,
+    "sourceFilesWithLegacySolanaImportsAfter": 1,
+    "manifestChanges": 3,
+    "directKitFilesChanged": 0,
+    "filesNeedingReview": 1,
+    "dynamicImportFiles": 0,
+    "unsupportedDynamicImports": 0,
+    "validationFailures": 0
+  },
+  "manifest": {
+    "changed": true,
+    "changes": [
+      {
+        "type": "add-dependency",
+        "section": "dependencies",
+        "name": "@solana/web3-compat",
+        "version": "^0.0.21",
+        "confidence": "high",
+        "reason": "Solana docs require compat, kit, and client packages for the bridge migration.",
+        "file": "package.json"
+      },
+      {
+        "type": "add-dependency",
+        "section": "dependencies",
+        "name": "@solana/kit",
+        "version": "^6.8.0",
+        "confidence": "high",
+        "reason": "Solana docs require compat, kit, and client packages for the bridge migration.",
+        "file": "package.json"
+      },
+      {
+        "type": "add-dependency",
+        "section": "dependencies",
+        "name": "@solana/client",
+        "version": "^1.7.0",
+        "confidence": "high",
+        "reason": "Solana docs require compat, kit, and client packages for the bridge migration.",
+        "file": "package.json"
+      }
+    ],
+    "lockfileRefreshRequired": false,
+    "installCommand": "npm install"
+  },
+  "confidence": {
+    "safeFiles": [],
+    "needsReview": [
+      {
+        "path": "src/entry.ts",
+        "hotspots": [
+          {
+            "kind": "PublicKey",
+            "reason": "PublicKey may need address() or compat object semantics.",
+            "line": 2,
+            "column": 23,
+            "text": "PublicKey"
+          },
+          {
+            "kind": "Connection",
+            "reason": "Connection may need createSolanaRpc review.",
+            "line": 3,
+            "column": 25,
+            "text": "Connection"
+          }
+        ]
+      }
+    ],
+    "unsupported": []
+  },
+  "codemod": {
+    "status": "skipped",
+    "command": null,
+    "error": null
+  },
+  "directKit": {
+    "status": "skipped",
+    "transforms": [],
+    "filesChanged": 0,
+    "changes": [],
+    "error": null
+  },
+  "validation": [],
+  "rollback": {
+    "available": false,
+    "path": null,
+    "command": null,
+    "reason": "dry-run"
+  },
+  "nextSteps": [
+    "Review SOLANA_COMPAT_PILOT markers before attempting direct Kit rewrites."
+  ],
+  "migrationLimits": {
+    "hotspotDetection": "typescript-ast",
+    "directKitTransformsOffered": [
+      "public-key-literals",
+      "connection-string-literals"
+    ]
+  },
+  "knownFalseNegativeCategories": [
+    "Namespaced or aliased @solana/web3.js imports are not always detected by the string-based legacy import counter.",
+    "Dynamic import(\"@solana/web3.js\") is counted only when the module specifier is a static string literal.",
+    "sendAndConfirmTransaction and subscription hotspots are matched on direct call/property forms; indirect references may be missed.",
+    "Direct Kit transforms skip files when constructed values flow into member APIs or when imports are type-only/aliased.",
+    "Manifest migration only edits the root package.json; workspace package manifests are not walked automatically."
+  ],
+  "validationShellRisk": "Validation commands are executed with exec in the target cwd; only run trusted commands on trusted repositories."
+}
