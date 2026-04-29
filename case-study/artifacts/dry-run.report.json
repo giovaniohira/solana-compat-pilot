@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.1",
+  "schemaVersion": "1.2",
   "tool": "solana-compat-pilot",
   "mode": "dry-run",
   "target": "<temporary-sample-target>",
@@ -43,6 +43,42 @@
         "confidence": "high",
         "reason": "Solana docs require compat, kit, and client packages for the bridge migration.",
         "file": "package.json"
+      }
+    ],
+    "manifests": [
+      {
+        "packageJsonPath": "package.json",
+        "exists": true,
+        "changed": true,
+        "changes": [
+          {
+            "type": "add-dependency",
+            "section": "dependencies",
+            "name": "@solana/web3-compat",
+            "version": "^0.0.21",
+            "confidence": "high",
+            "reason": "Solana docs require compat, kit, and client packages for the bridge migration.",
+            "file": "package.json"
+          },
+          {
+            "type": "add-dependency",
+            "section": "dependencies",
+            "name": "@solana/kit",
+            "version": "^6.8.0",
+            "confidence": "high",
+            "reason": "Solana docs require compat, kit, and client packages for the bridge migration.",
+            "file": "package.json"
+          },
+          {
+            "type": "add-dependency",
+            "section": "dependencies",
+            "name": "@solana/client",
+            "version": "^1.7.0",
+            "confidence": "high",
+            "reason": "Solana docs require compat, kit, and client packages for the bridge migration.",
+            "file": "package.json"
+          }
+        ]
       }
     ],
     "lockfileRefreshRequired": false,
@@ -99,7 +135,8 @@
     "hotspotDetection": "typescript-ast",
     "directKitTransformsOffered": [
       "public-key-literals",
-      "connection-string-literals"
+      "connection-string-literals",
+      "websocket-connection-literals"
     ]
   },
   "knownFalseNegativeCategories": [
@@ -107,7 +144,7 @@
     "Dynamic import(\"@solana/web3.js\") is counted only when the module specifier is a static string literal.",
     "sendAndConfirmTransaction and subscription hotspots are matched on direct call/property forms; indirect references may be missed.",
     "Direct Kit transforms skip files when constructed values flow into member APIs or when imports are type-only/aliased.",
-    "Manifest migration only edits the root package.json; workspace package manifests are not walked automatically."
+    "Workspace glob patterns with multiple `*` segments (for example `**/pkgs/*`) are not expanded; only single-segment `packages/*` styles are walked."
   ],
   "validationShellRisk": "Validation commands are executed with exec in the target cwd; only run trusted commands on trusted repositories."
 }

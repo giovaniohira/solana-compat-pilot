@@ -14,6 +14,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "audit": "npm audit --audit-level=moderate",
     "ci": "npm run typecheck && npm test && npm run validate && npm run audit",
+    "migration-score": "node ./scripts/migration-score.mjs",
+    "benchmark:pipeline": "node ./scripts/benchmark-pipeline.mjs",
     "case-study:replay": "node ./scripts/replay-case-study.mjs"
   },
   "devDependencies": {

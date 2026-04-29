@@ -1,7 +1,12 @@
 import { fileURLToPath } from "node:url";
 
 export { applyDirectKitTransforms } from "./pipeline/direct-kit.mjs";
-export { planManifestMigration, applyManifestPlan } from "./pipeline/manifest.mjs";
+export {
+  applyManifestPlan,
+  listWorkspacePackageJsonPaths,
+  planManifestMigration,
+  workspacePatternsFromPackageJson,
+} from "./pipeline/manifest.mjs";
 export { createRollbackPatch, applyRollbackPatchSync } from "./pipeline/rollback.mjs";
 export { analyzeTarget, analyzeSourceFile, listSourceFiles, buildScanOptions } from "./pipeline/scan.mjs";
 

@@ -1,27 +1,21 @@
-import { relative } from "node:path";
-
 import { DIRECT_KIT_TRANSFORMS } from "./constants.mjs";
-import { normalizePath } from "./fs-utils.mjs";
 
 const KNOWN_FALSE_NEGATIVE_CATEGORIES = [
   "Namespaced or aliased @solana/web3.js imports are not always detected by the string-based legacy import counter.",
   "Dynamic import(\"@solana/web3.js\") is counted only when the module specifier is a static string literal.",
   "sendAndConfirmTransaction and subscription hotspots are matched on direct call/property forms; indirect references may be missed.",
   "Direct Kit transforms skip files when constructed values flow into member APIs or when imports are type-only/aliased.",
-  "Manifest migration only edits the root package.json; workspace package manifests are not walked automatically.",
+  "Workspace glob patterns with multiple `*` segments (for example `**/pkgs/*`) are not expanded; only single-segment `packages/*` styles are walked.",
 ];
 
 export function buildReport({ target, mode, before, after, manifestPlan, codemod, directKit, validation, rollback }) {
-  const changedManifests = manifestPlan.changes.map((change) => ({
-    ...change,
-    file: normalizePath(relative(target, manifestPlan.packageJsonPath)),
-  }));
+  const changedManifests = manifestPlan.changes?.map((change) => ({ ...change })) ?? [];
 
   const unsafeFiles = after.files.filter((file) => file.confidence === "needs-review");
   const dynamicImportFiles = after.files.filter((file) => file.dynamicImports > 0);
 
   return {
-    schemaVersion: "1.1",
+    schemaVersion: "1.2",
     tool: "solana-compat-pilot",
     mode,
     target,
@@ -39,6 +33,7 @@ export function buildReport({ target, mode, before, after, manifestPlan, codemod
     manifest: {
       changed: manifestPlan.changed,
       changes: changedManifests,
+      manifests: manifestPlan.manifests ?? [],
       lockfileRefreshRequired: manifestPlan.lockfileRefreshRequired,
       installCommand: manifestPlan.installCommand,
     },

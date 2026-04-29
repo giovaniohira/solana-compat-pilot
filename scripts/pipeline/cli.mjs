@@ -36,7 +36,7 @@ Options:
   --skip-validation  Allow apply without any --check commands (unsafe; default is to require checks)
   --include-test-dirs  Include tests/, __tests__/, fixtures/, etc. in scan counts (default excludes them)
   --exclude-glob Add a path glob (POSIX, relative to target) excluded from scans; repeatable
-  --direct-kit   Opt into a proven direct Kit transform; values: public-key-literals, connection-string-literals
+  --direct-kit   Opt into a proven direct Kit transform; values: public-key-literals, connection-string-literals, websocket-connection-literals
   --check        Validation command to run after apply; repeatable (required for --apply unless --skip-validation)
   --report       Report output path (default: target/solana-compat-pilot-report.json)
   --patch        Rollback patch output path (default: target/solana-compat-pilot.rollback.patch)

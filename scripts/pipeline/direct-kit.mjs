@@ -25,6 +25,10 @@ export function applyDirectKitTransforms(target, transforms = [], scanOptions = 
       const change = applyConnectionStringLiteralTransform(target, filePath);
       if (change) changes.push(change);
     }
+    if (transforms.includes("websocket-connection-literals")) {
+      const change = applyWebsocketConnectionLiteralTransform(target, filePath);
+      if (change) changes.push(change);
+    }
   }
 
   const uniquePaths = new Set(changes.map((change) => change.path));
@@ -143,6 +147,10 @@ function applyConnectionStringLiteralTransform(target, filePath) {
     if (ts.isNewExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === "Connection") {
       const args = node.arguments ?? [];
       if (args.length === 1 && isStringLikeLiteral(args[0])) {
+        if (isWebsocketUrlLiteral(args[0], sourceFile)) {
+          unsafeConnectionUses.push(node.expression);
+          return;
+        }
         safeConstructors.push(node);
       } else {
         unsafeConnectionUses.push(node.expression);
@@ -207,6 +215,98 @@ function applyConnectionStringLiteralTransform(target, filePath) {
     confidence: "high",
     reason: "Only unaliased Connection imports whose usages are single string-literal constructors without member follow-ups are rewritten to createSolanaRpc().",
   };
+}
+
+function applyWebsocketConnectionLiteralTransform(target, filePath) {
+  const source = readFileSync(filePath, "utf8");
+  if (!source.includes("Connection") || !source.includes("@solana/web3-compat")) return null;
+  if (!/wss?:\/\//.test(source)) return null;
+
+  const sourceFile = ts.createSourceFile(filePath, source, ts.ScriptTarget.Latest, true, scriptKind(filePath));
+  const eol = source.includes("\r\n") ? "\r\n" : "\n";
+  const compatImport = findNamedImport(sourceFile, "@solana/web3-compat", "Connection");
+  if (!compatImport || compatImport.isTypeOnly || compatImport.isAliased) return null;
+
+  const safeConstructors = [];
+  const unsafeConnectionUses = [];
+
+  visit(sourceFile, (node) => {
+    if (ts.isNewExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === "Connection") {
+      const args = node.arguments ?? [];
+      if (args.length === 1 && isStringLikeLiteral(args[0]) && isWebsocketUrlLiteral(args[0], sourceFile)) {
+        safeConstructors.push(node);
+      } else if (args.length === 1 && isStringLikeLiteral(args[0])) {
+        unsafeConnectionUses.push(node.expression);
+      } else {
+        unsafeConnectionUses.push(node.expression);
+      }
+      return;
+    }
+
+    if (ts.isIdentifier(node) && node.text === "Connection" && !isImportSpecifierName(node, compatImport.specifier)) {
+      unsafeConnectionUses.push(node);
+    }
+  });
+
+  const constructedNames = new Set(safeConstructors.map((node) => constructedVariableName(node)).filter(Boolean));
+  visit(sourceFile, (node) => {
+    if (
+      (ts.isPropertyAccessExpression(node) || ts.isElementAccessExpression(node))
+      && ts.isIdentifier(node.expression)
+      && constructedNames.has(node.expression.text)
+    ) {
+      unsafeConnectionUses.push(node.expression);
+    }
+  });
+
+  if (safeConstructors.length === 0 || unsafeConnectionUses.length > safeConstructors.length) return null;
+
+  const FACTORY = "createSolanaRpcSubscriptions";
+  const edits = safeConstructors.map((node) => {
+    const [argument] = node.arguments ?? [];
+    return {
+      start: node.getStart(sourceFile),
+      end: node.end,
+      text: `${FACTORY}(${argument.getText(sourceFile)})`,
+    };
+  });
+
+  const kitImport = findImportDeclaration(sourceFile, "@solana/kit");
+  const hasFactoryImport = Boolean(findNamedImport(sourceFile, "@solana/kit", FACTORY));
+  const compatReplacement = removeNamedImportFromDeclaration(sourceFile, source, compatImport.declaration, "Connection", eol);
+
+  if (!hasFactoryImport && kitImport) {
+    const kitReplacement = addNamedImportToDeclaration(sourceFile, kitImport, FACTORY);
+    if (kitReplacement) {
+      edits.push({ start: kitImport.getStart(sourceFile), end: kitImport.end, text: kitReplacement });
+    }
+  }
+
+  const importReplacement = !hasFactoryImport && !kitImport
+    ? `import { ${FACTORY} } from "@solana/kit";${eol}${compatReplacement}`
+    : compatReplacement;
+
+  edits.push({
+    start: compatImport.declaration.getStart(sourceFile),
+    end: includeTrailingLineBreak(source, compatImport.declaration.end),
+    text: importReplacement,
+  });
+
+  writeFileSync(filePath, applyTextEdits(source, edits));
+
+  return {
+    path: normalizePath(relative(target, filePath)),
+    transform: "websocket-connection-literals",
+    replacements: safeConstructors.length,
+    confidence: "high",
+    reason:
+      "Only unaliased Connection imports targeting a single websocket URL literal (ws:// or wss://) without other Connection usages are rewritten to createSolanaRpcSubscriptions().",
+  };
+}
+
+function isWebsocketUrlLiteral(node, sourceFile) {
+  const text = node.getText(sourceFile);
+  return /wss:\/\//.test(text) || /ws:\/\//.test(text);
 }
 
 function scriptKind(filePath) {

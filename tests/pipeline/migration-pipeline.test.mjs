@@ -12,6 +12,7 @@ import {
   applyManifestPlan,
   applyRollbackPatchSync,
   createRollbackPatch,
+  listWorkspacePackageJsonPaths,
   planManifestMigration,
   runPipeline,
 } from "../../scripts/migration-pipeline.mjs";
@@ -270,7 +271,7 @@ test("rollback patch reverses an uncommitted edit on a clean git baseline", () =
   assert.equal(restored, baseline.replaceAll("\r\n", "\n"));
 });
 
-test("dry-run report includes schema, AST hotspot metadata, and false-negative ledger", async () => {
+test("dry-run report includes schema 1.2, AST hotspot metadata, and false-negative ledger", async () => {
   const target = makeTarget({
     "package.json": JSON.stringify({
       dependencies: { "@solana/web3.js": "^1.95.0" },
@@ -280,7 +281,8 @@ test("dry-run report includes schema, AST hotspot metadata, and false-negative l
   const reportPath = join(target, "report.json");
   const report = await runPipeline({ target, report: reportPath });
 
-  assert.equal(report.schemaVersion, "1.1");
+  assert.equal(report.schemaVersion, "1.2");
+  assert.ok(Array.isArray(report.manifest.manifests));
   assert.equal(report.migrationLimits.hotspotDetection, "typescript-ast");
   assert.ok(Array.isArray(report.knownFalseNegativeCategories));
   assert.ok(report.knownFalseNegativeCategories.length >= 3);
@@ -318,6 +320,77 @@ test("plans root manifest when npm workspaces are declared", () => {
 
   assert.equal(plan.changed, true);
   assert.equal(analysis.packageJson.workspaces, true);
+});
+
+test("plans and applies manifests in nested workspaces when legacy web3 is only in a package", () => {
+  const target = makeTarget({
+    "package.json": JSON.stringify({
+      name: "mono",
+      private: true,
+      workspaces: ["packages/*"],
+    }),
+    "packages/a/package.json": JSON.stringify({
+      name: "pkg-a",
+      version: "1.0.0",
+      dependencies: { "@solana/web3.js": "^1.95.0" },
+    }),
+  });
+
+  const discovered = listWorkspacePackageJsonPaths(target).map((p) => p.replaceAll("\\", "/"));
+  assert.ok(discovered.some((p) => p.endsWith("packages/a/package.json")));
+
+  const plan = planManifestMigration(target);
+  assert.equal(plan.changed, true);
+  assert.equal(plan.plans.length, 1);
+  applyManifestPlan(plan);
+
+  const child = JSON.parse(readFileSync(join(target, "packages/a", "package.json"), "utf8"));
+  assert.equal(child.dependencies["@solana/web3-compat"], "^0.0.21");
+});
+
+test("lists workspaces from pnpm-workspace.yaml when npm workspaces array is absent", () => {
+  const target = makeTarget({
+    "package.json": JSON.stringify({ name: "r", private: true }),
+    "pnpm-workspace.yaml": `packages:\n  - 'packages/*'\n`,
+    "packages/foo/package.json": JSON.stringify({ name: "f", version: "0.0.0" }),
+  });
+
+  assert.equal(listWorkspacePackageJsonPaths(target).length, 1);
+});
+
+test("direct Kit websocket transform rewrites wss Connection literals without member usage", () => {
+  const target = makeTarget({
+    "src/ws.ts": [
+      'import { Connection } from "@solana/web3-compat";',
+      "",
+      'const sub = new Connection("wss://api.devnet.solana.com");',
+      "console.log(sub);",
+    ].join("\n"),
+  });
+
+  const result = applyDirectKitTransforms(target, ["websocket-connection-literals"]);
+  const source = readFileSync(join(target, "src/ws.ts"), "utf8");
+
+  assert.equal(result.filesChanged, 1);
+  assert.match(source, /import \{ createSolanaRpcSubscriptions \} from "@solana\/kit";/);
+  assert.match(source, /createSolanaRpcSubscriptions\("wss:\/\/api.devnet.solana.com"\)/);
+});
+
+test("direct Kit websocket transform skips when Connection has member usage", () => {
+  const target = makeTarget({
+    "src/ws.ts": [
+      'import { Connection } from "@solana/web3-compat";',
+      "",
+      'const sub = new Connection("wss://example.com");',
+      "void sub.onAccountChange(null, () => {});",
+    ].join("\n"),
+  });
+
+  const result = applyDirectKitTransforms(target, ["websocket-connection-literals"]);
+  const source = readFileSync(join(target, "src/ws.ts"), "utf8");
+
+  assert.equal(result.filesChanged, 0);
+  assert.match(source, /new Connection/);
 });
 
 test("direct Kit transform skips PublicKey files with object API usage", () => {
