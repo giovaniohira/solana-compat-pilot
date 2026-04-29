@@ -29,7 +29,7 @@ npx codemod workflow validate -w workflow.yaml
 node ./scripts/migration-pipeline.mjs --target /path/to/solana-project --dry-run
 ```
 
-Replayable public evidence for judges is documented under `case-study/` (command checklist, `npm run case-study:replay`, and committed `case-study/artifacts/*.json` samples).
+Replayable public evidence for judges is documented under `case-study/` (command checklist, `npm run case-study:replay`, committed `case-study/artifacts/*.json` samples, and pinned real-repo notes in [`case-study/EXTERNAL.md`](case-study/EXTERNAL.md)).
 
 The migration runner is split under `scripts/pipeline/` (scan/manifest/direct Kit/report/rollback) so the CLI entry `scripts/migration-pipeline.mjs` stays a thin orchestrator.
 
@@ -42,8 +42,8 @@ node ./scripts/migration-pipeline.mjs --target /path/to/solana-project --dry-run
 # Apply deterministic changes and produce a rollback patch (requires validation checks).
 node ./scripts/migration-pipeline.mjs --target /path/to/solana-project --apply --check "npm test"
 
-# Apply with opt-in direct Kit transforms (repeat --direct-kit for both).
-node ./scripts/migration-pipeline.mjs --target /path/to/solana-project --apply --check "npm test" --direct-kit public-key-literals --direct-kit connection-string-literals
+# Apply with opt-in direct Kit transforms (repeat `--direct-kit` per transform).
+node ./scripts/migration-pipeline.mjs --target /path/to/solana-project --apply --check "npm test" --direct-kit public-key-literals --direct-kit connection-string-literals --direct-kit websocket-connection-literals
 
 # Apply, refresh lockfile, and run target validation commands.
 node ./scripts/migration-pipeline.mjs --target /path/to/solana-project --apply --install --check "npm test" --check "npm run build"
@@ -80,25 +80,28 @@ Automated:
 - Dynamic `import("@solana/web3.js")` to `@solana/web3-compat`.
 - `import x = require("@solana/web3.js")` to `@solana/web3-compat`.
 - `package.json` additions for `@solana/web3-compat`, `@solana/kit`, and
-  `@solana/client` when `@solana/web3.js` is present.
-- Opt-in direct Kit rewrites:
+  `@solana/client` for every scanned workspace manifest (root plus `packages/*`-style folders
+  resolved from npm `workspaces` and from `pnpm-workspace.yaml`).
+- Opt-in direct Kit rewrites (`--direct-kit`):
   - unaliased `new PublicKey("<literal>")` when the imported `PublicKey` is only
     used for string-literal constructors and the constructed values are not used
     through legacy object/member APIs (`address` from `@solana/kit`);
-  - unaliased `new Connection("<literal>")` when the `Connection` import is only
-    used for that narrow constructor pattern without member follow-ups
-    (`createSolanaRpc` from `@solana/kit`).
+  - unaliased `new Connection("<http(s) RPC URL>")` when the compat `Connection` import matches
+    the narrow constructor-only pattern (`createSolanaRpc` from `@solana/kit`).
+  - unaliased `new Connection("<ws:// or wss:// URL>")` with the same safety rules
+    (`createSolanaRpcSubscriptions` from `@solana/kit`; opt-in `websocket-connection-literals`).
 - Dry-run JSON report, confidence buckets, validation command hooks, and git
   rollback patch.
 - Review markers for full-Kit migration hotspots.
 
-Not automated yet:
+Additional automation gaps (still manual / AI review):
 
-- `new Connection(...)` to `createSolanaRpc(...)`.
-- `new PublicKey(...)` to `address(...)` when the value is used through legacy
-  `PublicKey` object methods.
-- `Keypair` to async Kit signer APIs.
-- Mutable `Transaction` builders to Kit transaction-message pipelines.
+- `new Connection` / `PublicKey` / `Keypair` cases outside the guarded literal patterns above.
 
-Those patterns require project-specific semantics and are intentionally left for
-the bounded AI/manual phase until fixtures prove zero-false-positive handling.
+Not automated yet (semantic / async boundary changes):
+
+`Keypair`-style flows to Kit signers (`generateKeyPair` is async unlike `Keypair.generate()`).
+Mutable `Transaction` builders to Kit transaction-message pipelines.
+
+Those patterns remain for project-specific review (`SOLANA_COMPAT_PILOT` markers plus optional bounded Codemod AI step in `workflow.yaml`, which CI does **not** execute).
+

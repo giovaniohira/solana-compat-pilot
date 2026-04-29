@@ -5,16 +5,22 @@
 Commands:
 
 ```bash
-npm test
-npm run validate
+npm run ci
 ```
 
 Results:
 
 - JSSG fixtures: 13 passed, 0 failed.
-- Pipeline unit tests: 9 passed, 0 failed.
+- Pipeline unit tests: 22 passed, 0 failed.
 - Workflow validation: passed.
+- Typecheck: passed.
 - Dependency audit from `npm install`: 0 vulnerabilities.
+
+GitHub Actions parity:
+
+- `.github/workflows/ci.yml` runs `npm ci`, `npm run typecheck`, `npm test`,
+  `npm run validate`, and `npm run audit` (same gates as `npm run ci`,
+  with install separated into its own step).
 
 Fixture coverage:
 
@@ -66,8 +72,9 @@ Representative diff:
 - Dynamic `import("@solana/web3.js")` is supported by the package-source
   rewrite fixture.
 - `package.json` dependency changes are automated by the pipeline runner.
-- Direct Kit rewrites are limited to the opt-in `public-key-literals` transform
-  until broader patterns have proof.
+- Direct Kit rewrites are limited to three opt-in transforms:
+  `public-key-literals`, `connection-string-literals`, and
+  `websocket-connection-literals`.
 - Full direct Kit transforms are intentionally not implemented until each
   pattern has fixtures and real-repo proof.
 
@@ -101,7 +108,8 @@ Fixed in the remediation slice:
 - Added CI gates for tests, workflow validation, and audit.
 - Removed inflated score language from user-facing docs.
 - Added dirty-target refusal by default in apply mode.
-- Added an opt-in direct Kit transform for safe `PublicKey` string literals.
+- Added opt-in direct Kit transforms for safe `PublicKey` string literals and
+  safe `Connection` string-literal endpoints (HTTP/S and WebSocket).
 
 Still missing:
 

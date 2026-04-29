@@ -64,6 +64,7 @@ Success definition:
 | `require("@solana/web3.js")` | Rewrite source to `@solana/web3-compat` | High |
 | `import("@solana/web3.js")` | Rewrite source to `@solana/web3-compat` | High |
 | `new PublicKey("<literal>")` without legacy object/member usage | Opt-in rewrite to `address("<literal>")` from `@solana/kit` | High |
+| `new Connection("<literal>")` without endpoint post-processing usage | Opt-in rewrite to `createSolanaRpc("<literal>")` from `@solana/kit` | High |
 | `new Connection(...)` | Add marker, no rewrite | Medium risk |
 | `new PublicKey(...)` with object API usage | Add marker, no rewrite | Medium risk |
 | `Keypair.*` | Add marker, no rewrite | High risk |

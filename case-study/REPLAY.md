@@ -2,6 +2,8 @@
 
 This folder documents how a third party can reproduce the same gates the maintainers run, without relying on private notes or chat logs.
 
+For a pinned real-repository dry-run narrative, see [EXTERNAL.md](EXTERNAL.md).
+
 ## What “replay” means here
 
 1. Clone this repository at a known revision (use the commit SHA printed by `git rev-parse HEAD` after you update).
