@@ -17,4 +17,6 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run validate
+      # Note: workflow.yaml contains an optional Codemod Cloud AI follow-up path.
+      # This CI validates deterministic workflow syntax only; AI execution is manual/platform-run.
       - run: npm run audit

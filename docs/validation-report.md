@@ -78,11 +78,11 @@ Representative diff:
 - Full direct Kit transforms are intentionally not implemented until each
   pattern has fixtures and real-repo proof.
 
-## Hostile Review After Initial Baseline
+## Historical Baseline (archived context)
 
-The initial baseline was not a winning system. It had three passing fixtures and
-only rewrote import/require source strings. The docs overstated maturity by
-presenting council scores that were not supported by implementation evidence.
+The initial baseline had three passing fixtures and only rewrote import/require
+source strings. This section is retained as historical context; current quality
+claims should be read from the sections above.
 
 Critical gaps identified:
 
@@ -115,7 +115,8 @@ Still missing:
 
 - Broader direct Kit transforms with enough proof to claim meaningful full
   migration coverage.
-- Reproducible public case-study branch with before/after commits and target
-  build/test logs.
+- Public before/after **apply** branch evidence with pinned commit pair and
+  target build/test logs (dry-run replay evidence is already documented under
+  `case-study/REPLAY.md` and `case-study/EXTERNAL.md`).
 - Lockfile refresh automation is available through `--install`, but lockfile
   edits are not synthesized manually.

@@ -31,6 +31,8 @@ node ./scripts/migration-pipeline.mjs --target /path/to/solana-project --dry-run
 
 Replayable public evidence for judges is documented under `case-study/` (command checklist, `npm run case-study:replay`, committed `case-study/artifacts/*.json` samples, and pinned real-repo notes in [`case-study/EXTERNAL.md`](case-study/EXTERNAL.md)).
 
+Pinned replay references in this repository are currently anchored at pilot commit `c46d591f4f80d9cd88fe2331c702975a93e2afc9` and target-repo commit(s) listed in `case-study/EXTERNAL.md`.
+
 The migration runner is split under `scripts/pipeline/` (scan/manifest/direct Kit/report/rollback) so the CLI entry `scripts/migration-pipeline.mjs` stays a thin orchestrator.
 
 Recommended pipeline:
@@ -104,4 +106,12 @@ Not automated yet (semantic / async boundary changes):
 Mutable `Transaction` builders to Kit transaction-message pipelines.
 
 Those patterns remain for project-specific review (`SOLANA_COMPAT_PILOT` markers plus optional bounded Codemod AI step in `workflow.yaml`, which CI does **not** execute).
+
+## Migration score meaning
+
+The headline score produced by `scripts/migration-score.mjs` is a file-level coverage ratio:
+`safeFilesCoveragePercent = safeFiles / legacyFilesBefore` (rounded to two decimals).
+It is **not** "% of the whole codebase migrated to Kit" and should be read together with
+the `needs-review` hotspot list. Formula details are documented in
+[`case-study/migration-score.md`](case-study/migration-score.md).
 

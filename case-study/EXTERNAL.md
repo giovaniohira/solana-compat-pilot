@@ -10,6 +10,7 @@ Representative OSS production app using `@solana/web3.js` at scale (pnpm, Next.j
 | --- | --- |
 | Repo | `https://github.com/solana-labs/explorer` |
 | **Before** pinned ref | **`0c71e7272ef8eb1a72a9b2b16c5cd2056b6d5c63`** (`HEAD` at capture time — re-verify with `git rev-parse HEAD` after cloning) |
+| Pilot tool pinned ref | **`c46d591f4f80d9cd88fe2331c702975a93e2afc9`** |
 | Package manager files | Root `pnpm-lock.yaml` |
 
 ### Recorded benchmark (dry-run, no writes)
@@ -46,6 +47,19 @@ Apply mode on the full explorer is deliberately **not claimed** here: Next.js br
 ## After migrate ref (manual)
 
 Maintain a **`case-study/after-compat-migration` tag / branch** once you genuinely land an apply + validations. Record **`git rev-parse HEAD`** separately and stash install/build logs next to dry-run artefacts.
+
+## Proof bundle checklist (submission-ready)
+
+- Pilot commit SHA (this repo): `c46d591f4f80d9cd88fe2331c702975a93e2afc9`.
+- External target SHA (before): `0c71e7272ef8eb1a72a9b2b16c5cd2056b6d5c63`.
+- Committed deterministic sample artifacts:
+  - `case-study/artifacts/dry-run.report.json`
+  - `case-study/artifacts/dry-run.summary.json`
+- Command recipe and validator gates:
+  - `case-study/REPLAY.md`
+  - `case-study/baseline-commands.txt`
+
+If you publish an after-migration branch, add that SHA and the corresponding `types/test/build` logs in this section.
 
 ---
 
