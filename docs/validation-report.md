@@ -1,6 +1,6 @@
 # Validation Report
 
-## Local Quality Gates After Remediation
+## Local quality gates (current)
 
 Commands:
 
@@ -8,13 +8,13 @@ Commands:
 npm run ci
 ```
 
-Results:
+Results (representative run):
 
-- JSSG fixtures: 13 passed, 0 failed.
-- Pipeline unit tests: 22 passed, 0 failed.
+- JSSG fixtures: **20** passed, 0 failed.
+- Pipeline integration tests: **22** passed, 0 failed.
 - Workflow validation: passed.
 - Typecheck: passed.
-- Dependency audit from `npm install`: 0 vulnerabilities.
+- `npm audit --audit-level=moderate`: 0 vulnerabilities.
 
 GitHub Actions parity:
 
@@ -22,101 +22,27 @@ GitHub Actions parity:
   `npm run validate`, and `npm run audit` (same gates as `npm run ci`,
   with install separated into its own step).
 
-Fixture coverage:
+Fixture coverage (high level):
 
-- ESM import source rewrite with `Connection` and `PublicKey` markers.
-- CommonJS `require` source rewrite with `Keypair` and `Transaction` markers.
-- Negative local `PublicKey` file remains unchanged.
-- Namespace imports, aliases, type-only imports, dynamic imports,
-  `import = require`, comments/strings, existing markers, mixed packages,
-  single quotes, and safe no-marker files.
+- ESM / CJS / dynamic / `import = require` / **`export {…} from` / `export * from`** module string rewrites for `@solana/web3.js` → `@solana/web3-compat`.
+- Hotspot markers for `Connection`, `PublicKey`, `Keypair`, `Transaction`, subscriptions, `sendAndConfirmTransaction` where patterns appear in source.
+- Negative: files without legacy package, mixed packages, comments/strings, type-only imports, existing markers, RPC member guards for Connection, object API guards for PublicKey literal transform, etc.
 
-## Real-Repo Smoke Run After Remediation
+## Real-repo smoke run (archived narrative)
 
-Target:
+Earlier ad-hoc apply experiments were documented in git history. **Canonical** replay evidence is under **`case-study/EXTERNAL.md`**, **`case-study/REPLAY.md`**, and **`case-study/artifacts/*.json`**.
 
-- Repository: `captainlee1024/solana-web3js-tutorials`
-- Location: temporary clone outside this repo.
+## Known gaps (honest scope)
 
-Command:
+- Full semantic Kit migration (async `Keypair` → signers, mutable `Transaction` pipelines) is **explicitly out of scope** for deterministic automation; markers + optional bounded AI step document the path.
+- Direct Kit rewrites are limited to **three** opt-in transforms with fixtures: `public-key-literals`, `connection-string-literals`, `websocket-connection-literals`.
+- Apply on huge monorepos still requires project-specific `--check` commands; the tool enforces that you attach real validation.
 
-```bash
-node ./scripts/migration-pipeline.mjs --target <temp>/solana-compat-pilot-validation --dry-run --report <temp>/dry-run-report.json
-node ./scripts/migration-pipeline.mjs --target <temp>/solana-compat-pilot-validation --apply --report <temp>/apply-report.json
-```
+## Remediation status
 
-Result:
+Shipped in this repository:
 
-- Dry-run report completed without modifying target files.
-- Apply report completed successfully.
-- 30 TypeScript files changed.
-- `package.json` changed with 3 added Solana bridge dependencies.
-- Diff stat: 148 insertions, 30 deletions.
-- Every changed file had the legacy import source rewritten to
-  `@solana/web3-compat`.
-- Hotspot markers were inserted where full-Kit migration review is required.
-- Rollback patch was emitted.
-
-Representative diff:
-
-```diff
--import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
-+// SOLANA_COMPAT_PILOT: safe import bridge applied. Review these full-Kit migration hotspots before removing this marker:
-+// - new PublicKey: PublicKey can sometimes become address(), but object-method call sites may still need compat.
-+
-+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3-compat';
-```
-
-## Known Gaps
-
-- Dynamic `import("@solana/web3.js")` is supported by the package-source
-  rewrite fixture.
-- `package.json` dependency changes are automated by the pipeline runner.
-- Direct Kit rewrites are limited to three opt-in transforms:
-  `public-key-literals`, `connection-string-literals`, and
-  `websocket-connection-literals`.
-- Full direct Kit transforms are intentionally not implemented until each
-  pattern has fixtures and real-repo proof.
-
-## Historical Baseline (archived context)
-
-The initial baseline had three passing fixtures and only rewrote import/require
-source strings. This section is retained as historical context; current quality
-claims should be read from the sections above.
-
-Critical gaps identified:
-
-- No manifest migration.
-- No rollback path.
-- No dry-run report or machine-readable confidence output.
-- No CI.
-- Tiny fixture set.
-- No reproducible target build/test gate.
-- No direct Kit transform with proof.
-
-## Remediation Status
-
-Fixed in the remediation slice:
-
-- Added manifest migration for `@solana/web3-compat`, `@solana/kit`, and
-  `@solana/client`.
-- Added dry-run/apply runner with JSON report and confidence buckets.
-- Added git rollback patch generation.
-- Added validation command hooks.
-- Expanded JSSG fixtures from 3 to 13.
-- Added pipeline unit tests.
-- Added CI gates for tests, workflow validation, and audit.
-- Removed inflated score language from user-facing docs.
-- Added dirty-target refusal by default in apply mode.
-- Added opt-in direct Kit transforms for safe `PublicKey` string literals and
-  safe `Connection` string-literal endpoints (HTTP/S and WebSocket).
-
-Still missing:
-
-- Broader direct Kit transforms with enough proof to claim meaningful full
-  migration coverage.
-- Public before/after **apply** branch evidence with pinned commit pair and
-  target build/test logs (dry-run replay evidence is already documented under
-  `case-study/REPLAY.md` and `case-study/EXTERNAL.md`).
-- Lockfile refresh automation is available through `--install`, but lockfile
-  edits are not synthesized manually.
+- Manifest migration for compat + Kit + client deps across npm/pnpm workspaces.
+- Dry-run / apply runner with JSON report, migration score, rollback patch, dirty-git refusal.
+- Expanded JSSG corpus with negative and edge cases (**20** pairs).
+- CI gates and Codemod registry distribution (`npx codemod solana-compat-pilot`).

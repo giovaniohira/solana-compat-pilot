@@ -1,14 +1,25 @@
 # Solana Compat Pilot
 
-Solana Compat Pilot is a conservative Codemod/JSSG migration package for moving
-`@solana/web3.js` v1 projects onto the `@solana/web3-compat` bridge and preparing
-them for progressive `@solana/kit` adoption.
+**Registry:** [`npx codemod solana-compat-pilot`](https://app.codemod.com/registry/solana-compat-pilot) · **Quality gate:** `npm run ci` (TypeScript + **20** JSSG fixtures + **22** pipeline tests + workflow validate + npm audit) · **Real repos:** pinned SHAs in [`case-study/EXTERNAL.md`](case-study/EXTERNAL.md) (`solana-labs/explorer` + `solana-labs/solana-program-library` / `token/js`)
+
+Conservative **Codemod / JSSG (ast-grep)** workflow and **operator CLI** that move `@solana/web3.js` v1 code onto the official **`@solana/web3-compat`** bridge first, surface **review markers** where full **`@solana/kit`** work is not a mechanical rename, and optionally apply **three** narrow, fixture-tested `--direct-kit` literal transforms when you explicitly opt in.
+
+### Why this is built to win a “boring migration” hackathon
+
+| Judge concern | How this repo answers it |
+| --- | --- |
+| False positives / “vibe codemod” | Rewrites are tied to **real import/export module string literals** (ESM, CJS `require`, dynamic `import()`, `import = require`, **`export {…} from`**, **`export * from`**), with **negative** fixtures and hotspot detection — not text-substitution on random strings. |
+| Toy-only proof | **Two pinned corpora** + replay commands + committed JSON samples under `case-study/artifacts/`. |
+| No rollback / no report | **`--dry-run`** JSON report + migration score; **`--apply`** emits a **git rollback patch** and requires **`--check`** unless you explicitly skip. |
+| AI washing | Deterministic path is default; **bounded AI** in `workflow.yaml` is **off** in CI and opt-in via workflow param. |
+
+**Fast path for judges:** [`docs/JUDGE_REPRO.md`](docs/JUDGE_REPRO.md) · **BUIDL / submit copy:** [`docs/HACKATHON_WIN_PLAN.md`](docs/HACKATHON_WIN_PLAN.md) · **Publishable case study draft:** [`docs/MEDIUM_CASE_STUDY_DRAFT.md`](docs/MEDIUM_CASE_STUDY_DRAFT.md)
 
 ## DoraHacks / judge snapshot
 
-- **Positioning:** compat-bridge-first (official `@solana/web3-compat` path), not a fake “100% to Kit in one click” tool — see [`docs/HACKATHON_WIN_PLAN.md`](docs/HACKATHON_WIN_PLAN.md) for what top BUIDLs did well and your **P0 checklist** before submit. Upstream issue draft: [`docs/FRAMEWORK_ADOPTION.md`](docs/FRAMEWORK_ADOPTION.md).
-- **Trust signals:** `npm run fixtures:count` (JSSG `input.ts` / `expected.ts` pairs), `npm run test:pipeline` (integration tests on the migration runner), `npm run ci`, **two** pinned dry-run corpora in [`case-study/EXTERNAL.md`](case-study/EXTERNAL.md) (`solana-labs/explorer` + `solana-labs/solana-program-library` / `token/js`), committed sample artifacts under `case-study/artifacts/`.
-- **After registry publish:** judges expect the exact install line — **`npx codemod solana-compat-pilot`**. Setup: [`docs/REGISTRY_PUBLISH.md`](docs/REGISTRY_PUBLISH.md) and workflow [`.github/workflows/publish-codemod.yml`](.github/workflows/publish-codemod.yml).
+- **Positioning:** compat-bridge-first (official `@solana/web3-compat` path), not “100% to Kit in one click” — see [`docs/HACKATHON_WIN_PLAN.md`](docs/HACKATHON_WIN_PLAN.md). Upstream issue draft: [`docs/FRAMEWORK_ADOPTION.md`](docs/FRAMEWORK_ADOPTION.md).
+- **Trust signals:** `npm run fixtures:count` (**20** JSSG pairs), `npm run test:pipeline` (**22** integration tests), `npm run ci`, two pinned dry-run corpora in [`case-study/EXTERNAL.md`](case-study/EXTERNAL.md), committed artifacts under `case-study/artifacts/`.
+- **Distribution:** **`npx codemod solana-compat-pilot`** on the [Codemod Registry](https://app.codemod.com/registry/solana-compat-pilot); publish flow in [`docs/REGISTRY_PUBLISH.md`](docs/REGISTRY_PUBLISH.md) and [`.github/workflows/publish-codemod.yml`](.github/workflows/publish-codemod.yml).
 
 The goal is not to guess through hard semantic rewrites. The deterministic pass
 handles changes that are safe at scale, while risky full-Kit migrations are
@@ -87,6 +98,7 @@ Automated:
 - CommonJS `require("@solana/web3.js")` to `@solana/web3-compat`.
 - Dynamic `import("@solana/web3.js")` to `@solana/web3-compat`.
 - `import x = require("@solana/web3.js")` to `@solana/web3-compat`.
+- `export { … } from "@solana/web3.js"` and `export * from "@solana/web3.js"` to the compat package string (barrel / package `index` surfaces).
 - `package.json` additions for `@solana/web3-compat`, `@solana/kit`, and
   `@solana/client` for every scanned workspace manifest (root plus `packages/*`-style folders
   resolved from npm `workspaces` and from `pnpm-workspace.yaml`).

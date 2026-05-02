@@ -8,7 +8,7 @@ You have not submitted yet. This document steals what top BUIDLs did well and ma
 | Pattern                       | Who did it                                                                 | What to copy                                                                                                                                                                                             |
 | ----------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **One-command + registry**    | @solana/web3 v1→v2 suite, ethers-v5-to-v6, wagmi entries                   | Ship `npx codemod <your-slug>` after `codemod.yaml` publish; put the exact command in README + BUIDL.                                                                                                    |
-| **Counted fixtures / tests**  | IDLift (200), web3py entries (9–26), wagmi (8–40)                          | Publish a number: run `npm run fixtures:count`. Never round up ambiguously.                                                                                                                              |
+| **Counted fixtures / tests**  | IDLift (200), web3py entries (9–26), wagmi (8–40)                          | Publish a number: run `npm run fixtures:count` (**20** pairs today). Never round up ambiguously.                                                                                                         |
 | **Named real repos + pins**   | IDLift (Drift, Marinade, metaDAO, SPL), web3py (ethereum/web3.py, brownie) | You already pin **solana-labs/explorer** in `case-study/EXTERNAL.md` — add **one second** smaller repo (e.g. a focused SDK or template) if time allows.                                                  |
 | **Case study outside GitHub** | Medium / dev.to                                                            | One **800–1200 word** post: problem → approach → dry-run on explorer → score meaning → what you refuse to automate (builds trust).                                                                       |
 | **Short demo video**          | Hybrid wagmi, suite                                                        | **60–90s**: clone explorer @ pin → dry-run → open JSON report → show `needs-review` hotspots (honesty sells).                                                                                            |
@@ -28,7 +28,8 @@ You have not submitted yet. This document steals what top BUIDLs did well and ma
 ### P0 — Before you click “Submit” (same day)
 
 - Run `npm run ci` locally; fix anything red.
-- Run `npm run fixtures:count`; put the number in README + BUIDL.
+- Run `npm run fixtures:count`; put the number in README + BUIDL (**currently 20** JSSG pairs).
+- Hand judges [`docs/JUDGE_REPRO.md`](JUDGE_REPRO.md) (copy-paste repro under five minutes).
 - Record **demo video** (screen + voice optional): explorer pin → `migration-pipeline.mjs --dry-run` → show report + migration score stdout.
 - Publish **case study** (Medium or dev.to); link in BUIDL + README.
 - **Codemod Registry**: publish from this repo’s `codemod.yaml` so judges can run `npx codemod …` without cloning — follow `[REGISTRY_PUBLISH.md](REGISTRY_PUBLISH.md)` (Trusted Publisher + GitHub Action or local `codemod login`).
@@ -63,7 +64,7 @@ Paste-ready copy also lives in `[FRAMEWORK_ADOPTION.md](FRAMEWORK_ADOPTION.md)` 
 > - Emits a **JSON report**, migration score, and **git rollback** patch on apply; requires `--check` for real applies.
 >
 > Repo: `https://github.com/giovaniohira/solana-compat-pilot`  
-> Registry (after publish): `npx codemod <YOUR_REGISTRY_SLUG>`  
+> Registry: `npx codemod solana-compat-pilot`  
 > Evidence: dry-run on pinned `solana-labs/explorer` — see `case-study/EXTERNAL.md`.
 >
 > **Ask:** Link this tool (or the general pattern) from the official migration docs / issue tracker so teams discover the compat-first path before risky full rewrites.
@@ -82,7 +83,7 @@ Solana upgrades fail when codemods pretend `Connection` / `Keypair` / `Transacti
 
 - ESM / CJS / dynamic import / `import = require` for `@solana/web3.js` → `@solana/web3-compat`.  
 - Workspace-aware `package.json` updates (npm / pnpm workspaces).  
-- JSSG fixture suite — run `npm run fixtures:count` for the current count; integration coverage in `tests/pipeline/*.test.mjs` (`npm run test:pipeline`).
+- JSSG fixture suite — **20** `input.ts` / `expected.ts` pairs (`npm run fixtures:count`); **22** integration tests in `tests/pipeline/*.test.mjs` (`npm run test:pipeline`).
 
 **Opt-in Kit**  
 
@@ -99,14 +100,17 @@ Solana upgrades fail when codemods pretend `Connection` / `Keypair` / `Transacti
 - CI: typecheck + JSSG tests + pipeline tests + workflow validate + npm audit.
 
 **Install**  
-`git clone` + `npm ci` + `npm run ci` — Registry: `npx codemod solana-compat-pilot` (after Trusted Publisher + publish succeed; see `docs/REGISTRY_PUBLISH.md`).
+`git clone https://github.com/giovaniohira/solana-compat-pilot.git` → `npm ci` → `npm run ci` — Registry: **`npx codemod solana-compat-pilot`** ([listing](https://app.codemod.com/registry/solana-compat-pilot)). Republish after bumps: `docs/REGISTRY_PUBLISH.md`.
+
+**Tracks (map to how DoraHacks / Codemod score you)**  
+Recipe / distribution: registry + workflow. Case study: pinned explorer + SPL `token/js` + artifacts. Adoption: open the issue from `docs/FRAMEWORK_ADOPTION.md` and link the URL here.
 
 **Links**  
 
 - GitHub: `https://github.com/giovaniohira/solana-compat-pilot`  
-- Case study: *(your Medium/dev.to URL)*  
-- Demo: *(YouTube / Loom URL)*  
-- Adoption issue: *(GitHub issue URL)*
+- Case study: publish `docs/MEDIUM_CASE_STUDY_DRAFT.md` to Medium or dev.to → paste URL here  
+- Demo: 60–90s screen recording (explorer dry-run → open JSON report → `migration-score` stdout) → paste URL here  
+- Adoption issue: paste URL after filing on `solana-foundation/solana-web3.js` (or docs repo)
 
 ---
 

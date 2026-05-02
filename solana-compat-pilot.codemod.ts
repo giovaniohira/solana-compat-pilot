@@ -68,6 +68,11 @@ function isPackageImportSource(literal: SgNode<TSX>): boolean {
       return true;
     }
 
+    // `export { ... } from "pkg"` / `export * from "pkg"` / `export type { ... } from "pkg"`
+    if (ancestor.kind() === "export_statement") {
+      return true;
+    }
+
     if (ancestor.kind() !== "call_expression") {
       return false;
     }

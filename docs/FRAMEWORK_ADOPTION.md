@@ -1,6 +1,6 @@
 # Framework adoption — issue draft
 
-Copy into a new issue on `**solana-foundation/solana-web3.js**` (or the repo where migration docs live). Replace placeholders after registry publish.
+Copy into a new issue on **`solana-foundation/solana-web3.js`** (or the repo where migration docs live). The registry slug is already live: `npx codemod solana-compat-pilot`.
 
 ## Title
 
