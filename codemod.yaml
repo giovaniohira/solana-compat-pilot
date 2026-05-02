@@ -5,6 +5,8 @@ version: "0.1.0"
 description: "Conservative @solana/web3.js v1 to Solana compat bridge migration with Kit readiness markers."
 author: "Giovani Ohira"
 license: "MIT"
+repository: "https://github.com/giovaniohira/solana-compat-pilot"
+homepage: "https://github.com/giovaniohira/solana-compat-pilot#readme"
 workflow: "workflow.yaml"
 category: "migration"
 
