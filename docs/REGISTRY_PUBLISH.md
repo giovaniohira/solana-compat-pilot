@@ -19,11 +19,25 @@ The Codemod UI only lists packages that **already exist** on the registry. **`so
 4. Set **Workflow path** to **`.github/workflows/publish-codemod.yml`** (not `publish.yml`; that is only an example in Codemod’s docs).
 5. After Trusted Publisher is saved, use OIDC: **`gh workflow run "Publish Codemod" --ref master`** (or push a `v*` tag). You can remove **`CODEMOD_API_KEY`** from repo secrets once OIDC publishes succeed.
 
-## Why `npx codemod publish` often fails on Windows
+## I don’t want to use Linux on my PC
 
-1. **Size:** With `node_modules` present, the publish tarball exceeds the **50 MB** registry limit (~**150 MB** from this repo’s `npm ci`, driven mainly by the `codemod` CLI optional native binaries). `.codemodignore` does **not** shrink that bundle in current CLI behavior here.
-2. **Bundling without `node_modules`:** If you strip `node_modules` and run `codemod publish`, Rolldown may fail with **`UnresolvedEntry`** for the JSSG entry file on **Windows**, even when the `.ts` file exists on disk. The same tree publishes successfully from **Linux** (e.g. GitHub Actions `ubuntu-latest`).
-3. **Practical fix:** Use the **[Publish Codemod](../../.github/workflows/publish-codemod.yml)** workflow after configuring a **Trusted Publisher** (below). No local `node_modules` and no Windows bundler path.
+You don’t have to install WSL or open Ubuntu locally.
+
+- **Recommended:** Stay on Windows and run publish **from your terminal with GitHub CLI** — the heavy step runs on **GitHub’s cloud runner** (`ubuntu-latest`), not on your machine:
+
+  ```bash
+  gh workflow run "Publish Codemod (bootstrap - API key once)" --ref master   # first time, if package missing
+  gh workflow run "Publish Codemod" --ref master                               # after Trusted Publisher
+  gh run watch --repo giovaniohira/solana-compat-pilot
+  ```
+
+  That is still “you publishing from Windows”; only the CPU that bundles the package is in the cloud.
+
+## Why a fully local `codemod publish` on Windows usually fails today
+
+1. **Size:** With this repo’s normal `npm ci`, `node_modules` pushes the publish tarball over the **50 MB** registry cap (~**150 MB**, mostly the `codemod` CLI optional binaries). `.codemodignore` does not fix that in current CLI behavior here.
+2. **Bundling:** A **minimal** `node_modules` (only `@codemod.com/jssg-types` + `typescript`, ~24 MB total) avoids the size limit, but the Windows CLI then hits **Rolldown `UnresolvedEntry`** on the JSSG entry file even though it exists — a **Windows + bundler** limitation in the Codemod CLI today, not your repo layout.
+3. So **100% local Windows-only publish** is not reliable until Codemod fixes that path; use **`gh workflow run`** (above) or another machine/OS for `codemod publish`.
 
 The JSSG entrypoint lives at the repo root as **`solana-compat-pilot.codemod.ts`** (workflow `js_file: ./solana-compat-pilot.codemod.ts`) so published packages match common registry layouts.
 
