@@ -27,6 +27,7 @@ jobs:
             echo "::error::Repo secret CODEMOD_API_KEY is missing. GitHub repo → Settings → Secrets and variables → Actions → New repository secret. Value = key from https://go.codemod.com/api-keys (Publish permission)."
             exit 1
           fi
-          export CODEMOD_AUTH_TOKEN="${CODEMOD_API_KEY}"
+          # API keys require `login --api-key`; CODEMOD_AUTH_TOKEN is for OIDC (publish-codemod.yml).
+          npx codemod@latest login --api-key "${CODEMOD_API_KEY}"
           npx codemod@latest whoami
           npx codemod@latest publish .
