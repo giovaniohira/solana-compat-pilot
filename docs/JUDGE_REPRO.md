@@ -16,7 +16,7 @@ npm ci
 npm run ci
 ```
 
-Expect: **20** JSSG fixture tests, **22** pipeline tests, workflow validate, typecheck, audit — all green.
+Expect: **50** JSSG fixture tests, **22** pipeline tests, workflow validate, typecheck, audit — all green.
 
 ## C — Prove deterministic behavior on fixtures only
 

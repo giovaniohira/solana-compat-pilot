@@ -10,7 +10,7 @@ npm run ci
 
 Results (representative run):
 
-- JSSG fixtures: **20** passed, 0 failed.
+- JSSG fixtures: **50** passed, 0 failed.
 - Pipeline integration tests: **22** passed, 0 failed.
 - Workflow validation: passed.
 - Typecheck: passed.
@@ -44,5 +44,5 @@ Shipped in this repository:
 
 - Manifest migration for compat + Kit + client deps across npm/pnpm workspaces.
 - Dry-run / apply runner with JSON report, migration score, rollback patch, dirty-git refusal.
-- Expanded JSSG corpus with negative and edge cases (**20** pairs).
+- Expanded JSSG corpus with negative and edge cases (**50** pairs).
 - CI gates and Codemod registry distribution (`npx codemod solana-compat-pilot`).

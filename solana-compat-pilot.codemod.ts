@@ -1,3 +1,11 @@
+/**
+ * Deterministic bridge: every edit is a **module specifier string** rewrite
+ * (`@solana/web3.js` → `@solana/web3-compat`) only when the string appears as a
+ * real ES/CJS/TS module boundary (see `isPackageImportSource`), plus optional
+ * `SOLANA_COMPAT_PILOT` hotspot header insertion.
+ *
+ * Covered shapes are fixture-tested under `tests/<case>/input.ts` (**50** pairs).
+ */
 import type { Codemod, Edit, SgNode } from "codemod:ast-grep";
 import type TSX from "codemod:ast-grep/langs/tsx";
 

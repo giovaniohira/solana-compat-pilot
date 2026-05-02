@@ -1,6 +1,6 @@
 {
   "name": "solana-compat-pilot",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Conservative Codemod/JSSG workflow for migrating @solana/web3.js v1 projects onto the Solana compat bridge.",
   "type": "module",

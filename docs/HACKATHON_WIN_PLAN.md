@@ -8,7 +8,7 @@ You have not submitted yet. This document steals what top BUIDLs did well and ma
 | Pattern                       | Who did it                                                                 | What to copy                                                                                                                                                                                             |
 | ----------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **One-command + registry**    | @solana/web3 v1→v2 suite, ethers-v5-to-v6, wagmi entries                   | Ship `npx codemod <your-slug>` after `codemod.yaml` publish; put the exact command in README + BUIDL.                                                                                                    |
-| **Counted fixtures / tests**  | IDLift (200), web3py entries (9–26), wagmi (8–40)                          | Publish a number: run `npm run fixtures:count` (**20** pairs today). Never round up ambiguously.                                                                                                         |
+| **Counted fixtures / tests**  | IDLift (200), web3py entries (9–26), wagmi (8–40)                          | Publish a number: run `npm run fixtures:count` (**50** pairs today). Never round up ambiguously.                                                                                                         |
 | **Named real repos + pins**   | IDLift (Drift, Marinade, metaDAO, SPL), web3py (ethereum/web3.py, brownie) | You already pin **solana-labs/explorer** in `case-study/EXTERNAL.md` — add **one second** smaller repo (e.g. a focused SDK or template) if time allows.                                                  |
 | **Case study outside GitHub** | Medium / dev.to                                                            | One **800–1200 word** post: problem → approach → dry-run on explorer → score meaning → what you refuse to automate (builds trust).                                                                       |
 | **Short demo video**          | Hybrid wagmi, suite                                                        | **60–90s**: clone explorer @ pin → dry-run → open JSON report → show `needs-review` hotspots (honesty sells).                                                                                            |
@@ -28,7 +28,7 @@ You have not submitted yet. This document steals what top BUIDLs did well and ma
 ### P0 — Before you click “Submit” (same day)
 
 - Run `npm run ci` locally; fix anything red.
-- Run `npm run fixtures:count`; put the number in README + BUIDL (**currently 20** JSSG pairs).
+- Run `npm run fixtures:count`; put the number in README + BUIDL (**currently 50** JSSG pairs).
 - Hand judges [`docs/JUDGE_REPRO.md`](JUDGE_REPRO.md) (copy-paste repro under five minutes).
 - Record **demo video** (screen + voice optional): explorer pin → `migration-pipeline.mjs --dry-run` → show report + migration score stdout.
 - Publish **case study** (Medium or dev.to); link in BUIDL + README.
@@ -83,7 +83,7 @@ Solana upgrades fail when codemods pretend `Connection` / `Keypair` / `Transacti
 
 - ESM / CJS / dynamic import / `import = require` for `@solana/web3.js` → `@solana/web3-compat`.  
 - Workspace-aware `package.json` updates (npm / pnpm workspaces).  
-- JSSG fixture suite — **20** `input.ts` / `expected.ts` pairs (`npm run fixtures:count`); **22** integration tests in `tests/pipeline/*.test.mjs` (`npm run test:pipeline`).
+- JSSG fixture suite — **50** `input.ts` / `expected.ts` pairs (`npm run fixtures:count`); **22** integration tests in `tests/pipeline/*.test.mjs` (`npm run test:pipeline`).
 
 **Opt-in Kit**  
 

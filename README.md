@@ -1,6 +1,6 @@
 # Solana Compat Pilot
 
-**Registry:** [`npx codemod solana-compat-pilot`](https://app.codemod.com/registry/solana-compat-pilot) · **Quality gate:** `npm run ci` (TypeScript + **20** JSSG fixtures + **22** pipeline tests + workflow validate + npm audit) · **Real repos:** pinned SHAs in [`case-study/EXTERNAL.md`](case-study/EXTERNAL.md) (`solana-labs/explorer` + `solana-labs/solana-program-library` / `token/js`)
+**Registry:** [`npx codemod solana-compat-pilot`](https://app.codemod.com/registry/solana-compat-pilot) · **Quality gate:** `npm run ci` (TypeScript + **50** JSSG fixture pairs + **22** pipeline tests + workflow validate + npm audit) · **Real repos:** pinned SHAs in [`case-study/EXTERNAL.md`](case-study/EXTERNAL.md) (`solana-labs/explorer` + `solana-labs/solana-program-library` / `token/js`)
 
 Conservative **Codemod / JSSG (ast-grep)** workflow and **operator CLI** that move `@solana/web3.js` v1 code onto the official **`@solana/web3-compat`** bridge first, surface **review markers** where full **`@solana/kit`** work is not a mechanical rename, and optionally apply **three** narrow, fixture-tested `--direct-kit` literal transforms when you explicitly opt in.
 
@@ -8,7 +8,7 @@ Conservative **Codemod / JSSG (ast-grep)** workflow and **operator CLI** that mo
 
 | Judge concern | How this repo answers it |
 | --- | --- |
-| False positives / “vibe codemod” | Rewrites are tied to **real import/export module string literals** (ESM, CJS `require`, dynamic `import()`, `import = require`, **`export {…} from`**, **`export * from`**), with **negative** fixtures and hotspot detection — not text-substitution on random strings. |
+| False positives / “vibe codemod” | Rewrites are tied to **real module specifier strings** only (import/export of all common TS/ES forms, `require()`, `import()`, `import = require`, import attributes **`assert` / `with`**, multiline / mixed type+value, etc.). **50** fixture pairs lock behavior; **`declare module`** and string *values* are negative cases — not touched. |
 | Toy-only proof | **Two pinned corpora** + replay commands + committed JSON samples under `case-study/artifacts/`. |
 | No rollback / no report | **`--dry-run`** JSON report + migration score; **`--apply`** emits a **git rollback patch** and requires **`--check`** unless you explicitly skip. |
 | AI washing | Deterministic path is default; **bounded AI** in `workflow.yaml` is **off** in CI and opt-in via workflow param. |
@@ -18,7 +18,7 @@ Conservative **Codemod / JSSG (ast-grep)** workflow and **operator CLI** that mo
 ## DoraHacks / judge snapshot
 
 - **Positioning:** compat-bridge-first (official `@solana/web3-compat` path), not “100% to Kit in one click” — see [`docs/HACKATHON_WIN_PLAN.md`](docs/HACKATHON_WIN_PLAN.md). Upstream issue draft: [`docs/FRAMEWORK_ADOPTION.md`](docs/FRAMEWORK_ADOPTION.md).
-- **Trust signals:** `npm run fixtures:count` (**20** JSSG pairs), `npm run test:pipeline` (**22** integration tests), `npm run ci`, two pinned dry-run corpora in [`case-study/EXTERNAL.md`](case-study/EXTERNAL.md), committed artifacts under `case-study/artifacts/`.
+- **Trust signals:** `npm run fixtures:count` (**50** JSSG pairs), `npm run test:pipeline` (**22** integration tests), `npm run ci`, two pinned dry-run corpora in [`case-study/EXTERNAL.md`](case-study/EXTERNAL.md), committed artifacts under `case-study/artifacts/`.
 - **Distribution:** **`npx codemod solana-compat-pilot`** on the [Codemod Registry](https://app.codemod.com/registry/solana-compat-pilot); publish flow in [`docs/REGISTRY_PUBLISH.md`](docs/REGISTRY_PUBLISH.md) and [`.github/workflows/publish-codemod.yml`](.github/workflows/publish-codemod.yml).
 
 The goal is not to guess through hard semantic rewrites. The deterministic pass

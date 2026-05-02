@@ -22,7 +22,7 @@ Solana Compat Pilot does the opposite. The JSSG codemod only touches **string li
 
 ## What runs in CI vs what stays human
 
-The default path is **deterministic**. CI runs **twenty** ast-grep fixture pairs and **twenty-two** integration tests over the migration runner: dry-run, apply, rollback patch generation, workspace-aware manifests, dirty-git refusal, and the narrow `--direct-kit` literal transforms.
+The default path is **deterministic**. CI runs **fifty** ast-grep fixture pairs and **twenty-two** integration tests over the migration runner: dry-run, apply, rollback patch generation, workspace-aware manifests, dirty-git refusal, and the narrow `--direct-kit` literal transforms.
 
 The workflow can optionally call a **bounded AI** follow-up for marked hotspots — but that path is **not** exercised in CI. I want reviewers to see that the baseline is safe without model entropy.
 

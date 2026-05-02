@@ -1,0 +1,3 @@
+import web3 from "@solana/web3.js";
+
+export const rpc = web3;
