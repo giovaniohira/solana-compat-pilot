@@ -1,6 +1,5 @@
 # Run ONCE to create the package on the Codemod registry (so it appears in the
-# Trusted Publisher dropdown). Uses a repo secret — remove the secret after
-# switching to OIDC + publish-codemod.yml if you prefer.
+# Trusted Publisher dropdown). Requires repo secret CODEMOD_API_KEY.
 name: Publish Codemod (bootstrap - API key once)
 
 on:
@@ -19,13 +18,15 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Install Codemod CLI
-        run: npm install -g codemod@latest
-
-      - name: Login and publish
+      - name: Publish with API key
         env:
           CODEMOD_API_KEY: ${{ secrets.CODEMOD_API_KEY }}
         run: |
-          npx codemod login --api-key "$CODEMOD_API_KEY"
-          npx codemod whoami
-          codemod publish .
+          set -euo pipefail
+          if [ -z "${CODEMOD_API_KEY}" ]; then
+            echo "::error::Repo secret CODEMOD_API_KEY is missing. GitHub repo → Settings → Secrets and variables → Actions → New repository secret. Value = key from https://go.codemod.com/api-keys (Publish permission)."
+            exit 1
+          fi
+          export CODEMOD_AUTH_TOKEN="${CODEMOD_API_KEY}"
+          npx codemod@latest whoami
+          npx codemod@latest publish .

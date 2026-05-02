@@ -13,7 +13,8 @@ The Codemod UI only lists packages that **already exist** on the registry. **`so
    - Add it as a repository secret **`CODEMOD_API_KEY`** (GitHub repo → Settings → Secrets and variables → Actions), or:  
      `gh secret set CODEMOD_API_KEY --repo giovaniohira/solana-compat-pilot` *(paste the key when prompted)*.
    - Run: **`gh workflow run "Publish Codemod (bootstrap - API key once)" --ref master`**  
-     Or use **Actions** → that workflow → **Run workflow**.
+     Or use **Actions** → that workflow → **Run workflow**.  
+     If the job fails immediately, open the log: almost always the **`CODEMOD_API_KEY`** repo secret is missing or invalid. The workflow checks for an empty secret and prints an explicit error.
 2. **Then** open **Add Trusted Publisher** again — **`solana-compat-pilot`** should appear in the package list.
 3. Set **Repository owner** to `giovaniohira`, **Repository name** to `solana-compat-pilot`.
 4. Set **Workflow path** to **`.github/workflows/publish-codemod.yml`** (not `publish.yml`; that is only an example in Codemod’s docs).
@@ -47,7 +48,8 @@ Uses OIDC after the package exists (see **“No packages found”** above for th
 
 1. Sign in at [app.codemod.com](https://app.codemod.com) with GitHub.
 2. Open [API Keys → Trusted Publishers](https://go.codemod.com/api-keys) and **Add Trusted Publisher** for package **`solana-compat-pilot`** (must match `name` in `codemod.yaml`), pointing at this GitHub repo (`owner` + `name`). Restrict **Workflow path** to **`.github/workflows/publish-codemod.yml`** if you use that field.
-3. Trigger [Publish Codemod](../../.github/workflows/publish-codemod.yml) via **Actions → Run workflow**, or push a git tag matching `v*` (e.g. `v0.1.0`).
+3. Trigger [Publish Codemod](../../.github/workflows/publish-codemod.yml) via **Actions → Run workflow**, or push a git tag matching `v*` (e.g. `v0.1.0`).  
+   If **`Publish Codemod`** fails on the “Publish to Codemod Registry” step: the package must already exist (bootstrap above), and the Trusted Publisher row must match **repository owner `giovaniohira`**, **repository name `solana-compat-pilot`**, and workflow path **`.github/workflows/publish-codemod.yml`** (not `publish.yml`).
 4. After a green run, install for judges:
 
    ```bash

@@ -1,5 +1,9 @@
 # Publishes this package to https://app.codemod.com — requires a Trusted Publisher
 # configured for repo + package name (see docs/REGISTRY_PUBLISH.md).
+#
+# If this job fails: open the run log for "Publish to Codemod Registry". Typical
+# causes — (1) Trusted Publisher not added yet, (2) wrong workflow path in Codemod
+# UI (must be .github/workflows/publish-codemod.yml), (3) repo owner/name typo.
 name: Publish Codemod
 
 on:
@@ -21,4 +25,5 @@ jobs:
       - name: Publish to Codemod Registry
         uses: codemod/publish-action@v1
         with:
+          # Must match Trusted Publisher + OIDC audience in Codemod dashboard.
           registry: "https://app.codemod.com"
