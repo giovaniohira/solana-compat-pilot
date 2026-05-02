@@ -16,6 +16,8 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
+      - name: JSSG fixture pair count
+        run: npm run fixtures:count
       - run: npm run validate
       # Note: workflow.yaml contains an optional Codemod Cloud AI follow-up path.
       # This CI validates deterministic workflow syntax only; AI execution is manual/platform-run.
