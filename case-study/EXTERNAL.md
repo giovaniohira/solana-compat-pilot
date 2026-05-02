@@ -44,6 +44,38 @@ Capture **stdout/stderr exit codes** for `pnpm run types`, `pnpm test`, or `pnpm
 
 Apply mode on the full explorer is deliberately **not claimed** here: Next.js breadth means real applies should still be guarded with project-specific `--check` gates and iterative review (`needs-review` files).
 
+---
+
+## Second pinned target — `solana-labs/solana-program-library` (`token/js`)
+
+Smaller TypeScript corpus than the explorer: SPL token JS client depends on `@solana/web3.js`, useful to show the pipeline on a library-shaped repo.
+
+| Field | Value |
+| --- | --- |
+| Repo | `https://github.com/solana-labs/solana-program-library` |
+| Path | `token/js` (package root under that directory) |
+| **Before** pinned ref | **`3be46552d32b21fac35f12fb7041bd8f25a8eb75`** (latest `token/js` touch at documentation time; re-verify with `git log -1 -- token/js`) |
+
+Reproduce locally:
+
+```bash
+git clone https://github.com/solana-labs/solana-program-library.git spl-case
+cd spl-case
+git checkout 3be46552d32b21fac35f12fb7041bd8f25a8eb75
+
+cd /path/to/solana-compat-pilot
+npm ci
+
+node ./scripts/migration-pipeline.mjs \
+  --target /absolute/path/to/spl-case/token/js \
+  --dry-run \
+  --report /absolute/path/to/spl-case/token/js/solana-compat-pilot-report.json
+
+node ./scripts/migration-score.mjs /absolute/path/to/spl-case/token/js/solana-compat-pilot-report.json
+```
+
+Treat timing and file counts as **machine-dependent**; commit or attach `solana-compat-pilot-report.json` when filing evidence.
+
 ## After migrate ref (manual)
 
 Maintain a **`case-study/after-compat-migration` tag / branch** once you genuinely land an apply + validations. Record **`git rev-parse HEAD`** separately and stash install/build logs next to dry-run artefacts.
