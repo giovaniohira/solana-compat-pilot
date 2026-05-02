@@ -29,7 +29,7 @@ You have not submitted yet. This document steals what top BUIDLs did well and ma
 - [ ] Run `npm run fixtures:count`; put the number in README + BUIDL.
 - [ ] Record **demo video** (screen + voice optional): explorer pin → `migration-pipeline.mjs --dry-run` → show report + migration score stdout.
 - [ ] Publish **case study** (Medium or dev.to); link in BUIDL + README.
-- [ ] **Codemod Registry**: publish from this repo’s `codemod.yaml` so judges can run `npx codemod …` without cloning (mirror winning entries).
+- [ ] **Codemod Registry**: publish from this repo’s `codemod.yaml` so judges can run `npx codemod …` without cloning — follow [`REGISTRY_PUBLISH.md`](REGISTRY_PUBLISH.md) (Trusted Publisher + GitHub Action or local `codemod login`).
 - [ ] Paste **BUIDL block** at bottom of this file into DoraHacks (keep under their character limits; trim if needed).
 
 ### P1 — This week (materially raises ceiling)

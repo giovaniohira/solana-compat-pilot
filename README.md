@@ -8,7 +8,7 @@ them for progressive `@solana/kit` adoption.
 
 - **Positioning:** compat-bridge-first (official `@solana/web3-compat` path), not a fake “100% to Kit in one click” tool — see [`docs/HACKATHON_WIN_PLAN.md`](docs/HACKATHON_WIN_PLAN.md) for what top BUIDLs did well and your **P0 checklist** before submit. Upstream issue draft: [`docs/FRAMEWORK_ADOPTION.md`](docs/FRAMEWORK_ADOPTION.md).
 - **Trust signals:** `npm run fixtures:count` (JSSG `input.ts` / `expected.ts` pairs), `npm run test:pipeline` (integration tests on the migration runner), `npm run ci`, **two** pinned dry-run corpora in [`case-study/EXTERNAL.md`](case-study/EXTERNAL.md) (`solana-labs/explorer` + `solana-labs/solana-program-library` / `token/js`), committed sample artifacts under `case-study/artifacts/`.
-- **After registry publish:** put the exact `npx codemod …` line in your BUIDL + README (winning entries always do).
+- **After registry publish:** put the exact `npx codemod …` line in your BUIDL + README (winning entries always do). Steps: [`docs/REGISTRY_PUBLISH.md`](docs/REGISTRY_PUBLISH.md) and workflow [`.github/workflows/publish-codemod.yml`](.github/workflows/publish-codemod.yml).
 
 The goal is not to guess through hard semantic rewrites. The deterministic pass
 handles changes that are safe at scale, while risky full-Kit migrations are

@@ -17,7 +17,8 @@
     "migration-score": "node ./scripts/migration-score.mjs",
     "benchmark:pipeline": "node ./scripts/benchmark-pipeline.mjs",
     "case-study:replay": "node ./scripts/replay-case-study.mjs",
-    "fixtures:count": "node ./scripts/count-fixtures.mjs"
+    "fixtures:count": "node ./scripts/count-fixtures.mjs",
+    "registry:publish": "codemod publish ."
   },
   "devDependencies": {
     "@codemod.com/jssg-types": "1.6.0",

@@ -1,0 +1,11 @@
+# Bundled by `npx codemod publish` — keep under registry size limits (omit heavy / secret paths).
+node_modules/
+.git/
+.cursor/
+.DS_Store
+npm-debug.log*
+.env
+.env.*
+!.env.example
+solana-compat-pilot-report.json
+solana-compat-pilot.rollback.patch
