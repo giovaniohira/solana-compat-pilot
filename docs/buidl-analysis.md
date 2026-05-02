@@ -1,6 +1,16 @@
 # BUIDL Analysis
 
-Source: DoraHacks hackathon BUIDL API for `boring-ai`, count 11.
+Source: DoraHacks Boring AI listing (May 2026), **21** visible submissions (API count may lag). Earlier rows below were from an earlier scrape; treat [`HACKATHON_WIN_PLAN.md`](HACKATHON_WIN_PLAN.md) as the live submit playbook.
+
+## High-threat entries (post-field review)
+
+| Project | Why it scores |
+| --- | --- |
+| @solana/web3.js v1→v2 **suite** (3 registry codemods, 21 fixtures, adoption issues) | Breadth + distribution |
+| **SolSweep** (tsc-in-loop + product narrative) | “Zero hallucinations” + full Kit story |
+| **EtherMod** (ethers + wagmi + solana-web3-to-kit registry) | Direct Solana overlap with bolder automation claims |
+| **IDLift** (200 tests, named protocols) | Gold standard for evidence density |
+| **Hybrid wagmi** (upstream PR + benchmark repo) | Adoption track multiplier |
 
 ## Individual Analysis
 

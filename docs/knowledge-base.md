@@ -17,7 +17,7 @@ those patterns can break runtime behavior.
 
 ## Competitive Analysis
 
-Observed BUIDL field from the DoraHacks API: 11 submissions.
+Observed BUIDL field (DoraHacks Boring AI listing): **21** submissions as of May 2026 — see `docs/HACKATHON_WIN_PLAN.md` for the submit playbook.
 
 | Project | Core Idea | Good | Weak | Exploitable Insight |
 | --- | --- | --- | --- | --- |

@@ -4,6 +4,12 @@ Solana Compat Pilot is a conservative Codemod/JSSG migration package for moving
 `@solana/web3.js` v1 projects onto the `@solana/web3-compat` bridge and preparing
 them for progressive `@solana/kit` adoption.
 
+## DoraHacks / judge snapshot
+
+- **Positioning:** compat-bridge-first (official `@solana/web3-compat` path), not a fake “100% to Kit in one click” tool — see [`docs/HACKATHON_WIN_PLAN.md`](docs/HACKATHON_WIN_PLAN.md) for what top BUIDLs did well and your **P0 checklist** before submit. Upstream issue draft: [`docs/FRAMEWORK_ADOPTION.md`](docs/FRAMEWORK_ADOPTION.md).
+- **Trust signals:** `npm run fixtures:count` (JSSG `input.ts` / `expected.ts` pairs), `npm run test:pipeline` (integration tests on the migration runner), `npm run ci`, pinned **`solana-labs/explorer`** dry-run in [`case-study/EXTERNAL.md`](case-study/EXTERNAL.md), committed sample artifacts under `case-study/artifacts/`.
+- **After registry publish:** put the exact `npx codemod …` line in your BUIDL + README (winning entries always do).
+
 The goal is not to guess through hard semantic rewrites. The deterministic pass
 handles changes that are safe at scale, while risky full-Kit migrations are
 reported with clear AI/human follow-up instructions.
