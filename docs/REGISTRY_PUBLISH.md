@@ -2,11 +2,13 @@
 
 You (the package owner) must authenticate with Codemod; this cannot be done from a headless agent on your behalf.
 
-## Why `npx codemod publish` failed locally (Windows)
+## Why `npx codemod publish` often fails on Windows
 
-1. **Size:** With `node_modules` present, the CLI tarball can exceed the **50 MB** registry limit (~150 MB+ from `npm ci` in this repo). A `.codemodignore` file is committed to exclude heavy paths when the CLI honors it; if you still see “Package too large”, publish from **GitHub Actions** (clean checkout, no `node_modules`) or temporarily move `node_modules` aside and use a **globally** installed CLI (see below).
-2. **Bundling:** With `node_modules` removed, `npx` may recreate local installs during the command. Prefer **`codemod publish`** after `npm install -g codemod@1.9.0` so the project tree stays small.
-3. **Windows:** If you see `Rolldown bundling failed: UnresolvedEntry` for `scripts/solana-compat-pilot.ts`, try the same publish on **Linux** (WSL2 or CI); the official `codemod/publish-action` runs on `ubuntu-latest`.
+1. **Size:** With `node_modules` present, the publish tarball exceeds the **50 MB** registry limit (~**150 MB** from this repo’s `npm ci`, driven mainly by the `codemod` CLI optional native binaries). `.codemodignore` does **not** shrink that bundle in current CLI behavior here.
+2. **Bundling without `node_modules`:** If you strip `node_modules` and run `codemod publish`, Rolldown may fail with **`UnresolvedEntry`** for the JSSG entry file on **Windows**, even when the `.ts` file exists on disk. The same tree publishes successfully from **Linux** (e.g. GitHub Actions `ubuntu-latest`).
+3. **Practical fix:** Use the **[Publish Codemod](../../.github/workflows/publish-codemod.yml)** workflow after configuring a **Trusted Publisher** (below). No local `node_modules` and no Windows bundler path.
+
+The JSSG entrypoint lives at the repo root as **`solana-compat-pilot.codemod.ts`** (workflow `js_file: ./solana-compat-pilot.codemod.ts`) so published packages match common registry layouts.
 
 ## Option A — GitHub Actions (recommended)
 

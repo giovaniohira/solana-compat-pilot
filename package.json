@@ -7,9 +7,9 @@
   "scripts": {
     "migrate": "node ./scripts/migration-pipeline.mjs",
     "test": "npm run test:jssg && npm run test:pipeline",
-    "test:jssg": "npx codemod jssg test -l tsx ./scripts/solana-compat-pilot.ts ./tests",
+    "test:jssg": "npx codemod jssg test -l tsx ./solana-compat-pilot.codemod.ts ./tests",
     "test:pipeline": "node --test ./tests/pipeline/*.test.mjs",
-    "test:verbose": "npx codemod jssg test -l tsx ./scripts/solana-compat-pilot.ts ./tests -v",
+    "test:verbose": "npx codemod jssg test -l tsx ./solana-compat-pilot.codemod.ts ./tests -v",
     "validate": "npx codemod workflow validate -w workflow.yaml",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "audit": "npm audit --audit-level=moderate",

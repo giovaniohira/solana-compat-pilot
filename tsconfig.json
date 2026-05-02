@@ -8,5 +8,5 @@
     "skipLibCheck": true,
     "types": ["@codemod.com/jssg-types"]
   },
-  "include": ["scripts/**/*.ts"]
+  "include": ["scripts/**/*.ts", "./solana-compat-pilot.codemod.ts"]
 }

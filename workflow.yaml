@@ -16,7 +16,7 @@ nodes:
     steps:
       - name: Rewrite safe @solana/web3.js imports to @solana/web3-compat
         js-ast-grep:
-          js_file: scripts/solana-compat-pilot.ts
+          js_file: ./solana-compat-pilot.codemod.ts
           language: "tsx"
 
       - name: AI follow-up for full Kit migration hotspots
