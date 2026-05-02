@@ -1,6 +1,6 @@
 # Framework adoption — issue draft
 
-Copy into a new issue on **`solana-foundation/solana-web3.js`** (or the repo where migration docs live). Replace placeholders after registry publish.
+Copy into a new issue on `**solana-foundation/solana-web3.js**` (or the repo where migration docs live). Replace placeholders after registry publish.
 
 ## Title
 
@@ -26,7 +26,7 @@ Link (or briefly document) a **compat-first** migration path from the official m
 ## Reference implementation
 
 - **Repository:** https://github.com/giovaniohira/solana-compat-pilot  
-- **Codemod registry (after publish):** `npx codemod <YOUR_SLUG_HERE>`  
+- **Codemod registry (after publish):** `npx codemod solana-compat-pilot`  
 - **Replayable evidence:** pinned `solana-labs/explorer` + `solana-labs/solana-program-library` (`token/js`) — see `case-study/EXTERNAL.md` in that repo.
 
 ## Ask
@@ -40,3 +40,4 @@ Happy to adjust wording or open a PR against docs if maintainers prefer that ove
 
 1. Paste the **issue URL** into your DoraHacks BUIDL and `docs/HACKATHON_WIN_PLAN.md` link placeholders.
 2. If maintainers ask for changes, keep this file in sync with the final agreed text.
+

@@ -1,5 +1,7 @@
-# Bundled by `npx codemod publish` — keep under registry size limits (omit heavy / secret paths).
+# Bundled by `npx codemod publish` — keep under ~50MB registry cap (see docs/REGISTRY_PUBLISH.md).
 node_modules/
+node_modules
+**/node_modules/**
 .git/
 .cursor/
 .DS_Store
@@ -9,3 +11,10 @@ npm-debug.log*
 !.env.example
 solana-compat-pilot-report.json
 solana-compat-pilot.rollback.patch
+
+# Dev / evidence only (full tree stays on GitHub; shrinks the publish tarball when the CLI honors ignores).
+scripts/
+case-study/
+docs/
+.github/
+package-lock.json

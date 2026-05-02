@@ -34,9 +34,16 @@ You don’t have to install WSL or open Ubuntu locally.
 
   That is still “you publishing from Windows”; only the CPU that bundles the package is in the cloud.
 
+## “Publish Codemod” fails with `Access denied` / permission to publish
+
+On GitHub Actions this almost always means **OIDC is fine but Codemod does not trust this repo for that package yet**. Typical fixes:
+
+1. **Package not created:** run the **bootstrap** workflow once with **`CODEMOD_API_KEY`** (see order above), then add the Trusted Publisher.
+2. **Trusted Publisher mismatch:** in [API Keys → Trusted Publishers](https://go.codemod.com/api-keys), the row must match **owner `giovaniohira`**, **repo `solana-compat-pilot`**, **workflow `.github/workflows/publish-codemod.yml`**, and package **`solana-compat-pilot`** (same string as `name` in `codemod.yaml`).
+
 ## Why a fully local `codemod publish` on Windows usually fails today
 
-1. **Size:** With this repo’s normal `npm ci`, `node_modules` pushes the publish tarball over the **50 MB** registry cap (~**150 MB**, mostly the `codemod` CLI optional binaries). `.codemodignore` does not fix that in current CLI behavior here.
+1. **Size:** With this repo’s normal `npm ci`, `node_modules` pushes the publish tarball over the **50 MB** registry cap (~**150 MB**, mostly the `codemod` CLI optional binaries). On Windows the CLI may still pack `node_modules` despite `.codemodignore`; use **GitHub Actions** for a clean tree, and keep `.codemodignore` updated for extra headroom.
 2. **Bundling:** A **minimal** `node_modules` (only `@codemod.com/jssg-types` + `typescript`, ~24 MB total) avoids the size limit, but the Windows CLI then hits **Rolldown `UnresolvedEntry`** on the JSSG entry file even though it exists — a **Windows + bundler** limitation in the Codemod CLI today, not your repo layout.
 3. So **100% local Windows-only publish** is not reliable until Codemod fixes that path; use **`gh workflow run`** (above) or another machine/OS for `codemod publish`.
 
