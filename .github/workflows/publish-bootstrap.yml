@@ -1,0 +1,31 @@
+# Run ONCE to create the package on the Codemod registry (so it appears in the
+# Trusted Publisher dropdown). Uses a repo secret — remove the secret after
+# switching to OIDC + publish-codemod.yml if you prefer.
+name: Publish Codemod (bootstrap - API key once)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install Codemod CLI
+        run: npm install -g codemod@latest
+
+      - name: Login and publish
+        env:
+          CODEMOD_API_KEY: ${{ secrets.CODEMOD_API_KEY }}
+        run: |
+          npx codemod login --api-key "$CODEMOD_API_KEY"
+          npx codemod whoami
+          codemod publish .
